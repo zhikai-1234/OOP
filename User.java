@@ -1,7 +1,7 @@
 public class User {
     private String UserID,password,age,maritalStatus;
     public void login(){
-    	log.info('test')
+    	log.info('test1')
     }
 
     public void changePassword(){
