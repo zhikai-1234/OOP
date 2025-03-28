@@ -3,15 +3,18 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
 public class BTOSystem {
+	
      private List<User> userList;
      private List<Project> projectList;
      
      public BTOSystem() { 
          userList = new ArrayList<>();
+         projectList = new ArrayList<>();
      }
      
      /* This loadUserDataFromFIle is to read the csv file of the roles, so when login in, 
@@ -63,10 +66,61 @@ public class BTOSystem {
              }
 
              reader.close();
-         } catch (IOException e) {
-             System.out.println("Error reading user file: " + e.getMessage());
-         }
+            
+         } 
+         
+         catch (Exception e) {
+        	    System.out.println("Something went wrong.");
+        	}
      }
+     
+     public void loadProjectDataFromFile(String filePath) {
+         try {
+             BufferedReader reader = new BufferedReader(new FileReader(filePath));
+             String line;
+             boolean isFirstLine = true;
+
+             while ((line = reader.readLine()) != null) {
+                 if (isFirstLine) {
+                     isFirstLine = false;
+                     continue;
+                 }
+
+                 String[] parts = line.split(",", -1);
+                 if (parts.length < 13) {
+                     System.out.println("Skipping malformed line: " + line);
+                     continue;
+                 }
+
+                 String projName = parts[0].trim();
+                 String neighborhood = parts[1].trim();
+                 String flatType1 = parts[2].trim();
+                 int units1 = Integer.parseInt(parts[3].trim());
+                 double price1 = Double.parseDouble(parts[4].trim());
+                 String flatType2 = parts[5].trim();
+                 int units2 = Integer.parseInt(parts[6].trim());
+                 double price2 = Double.parseDouble(parts[7].trim());
+                 String openDate = parts[8].trim();
+                 String closeDate = parts[9].trim();
+                 String manager = parts[10].trim();
+                 String officerSlots = parts[11].trim();
+                 List<String> officers = Arrays.asList(parts[12].split("\\s*,\\s*"));
+
+                 Project project = new Project(projName, neighborhood, flatType1, units1, price1,
+                         flatType2, units2, price2, openDate, closeDate, manager, officerSlots, officers);
+
+                 projectList.add(project);
+             }
+
+             reader.close();
+            
+         } 
+         
+         catch (Exception e) {
+        	    System.out.println("Something went wrong.");
+        	}
+     }
+
      
      
      /*For the login part the for loop is to iterate through all the 
@@ -124,7 +178,11 @@ public class BTOSystem {
         system.loadUserDataFromFile("ApplicantList.csv", "applicant");
         system.loadUserDataFromFile("OfficerList.csv", "officer");
         
+        system.loadProjectDataFromFile("ProjectList.csv"); //Read the Project Data csv file
+        
         system.login();
+        
+        System.out.println(system.projectList.get(0).getProjName());
     }
 }
 
