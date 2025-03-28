@@ -9,7 +9,7 @@ public class HdbManager extends User {
     }
     
     public void createProj(BTOSystem system){
-        System.out.println("Creating");
+        System.out.println(" testing: Creating");
     }
 
     public void editProj(){

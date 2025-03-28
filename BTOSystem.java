@@ -120,12 +120,11 @@ public class BTOSystem {
         	    System.out.println("Something went wrong.");
         	}
      }
-
-     
      
      /*For the login part the for loop is to iterate through all the 
-     objects created in the list and then match 1 by 1 until it finds the 
-     matching password and UserID*/
+      *objects created in the list and then match 1 by 1 until it finds the 
+      *matching password and UserID */
+      
     public User login(){
     	
         Scanner scanner = new Scanner(System.in);
@@ -189,12 +188,13 @@ public class BTOSystem {
         	 * your respective role classes you will be able to 
         	 * use the BTOSystem variables like accessing the
         	 * projectList or userList.*/
-            user.displayJobscope(system); 
-                                          
+            user.displayJobscope(system); //During runtime, user will be
+                                          //treated as your roles object
+                                          //calling its own overwritten
+                                          //displayJobscope method(polymorphism)
+                                                               
         }
-
-        
-        
+   
     }
 }
 
