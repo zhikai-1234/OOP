@@ -126,7 +126,7 @@ public class BTOSystem {
      /*For the login part the for loop is to iterate through all the 
      objects created in the list and then match 1 by 1 until it finds the 
      matching password and UserID*/
-    public void login(){
+    public User login(){
     	
         Scanner scanner = new Scanner(System.in);
         
@@ -143,14 +143,15 @@ public class BTOSystem {
             	
                 System.out.println("Login successful!");
                 
-                user.displayJobscope();  // display all the jobscope your role does.
-                                        // I only put some of ur jobscope
-
-                return;
+                return user;  //return your roles object, so if ur UserID
+                              //and password matches a Manager object
+                              //it will return a manager object. And
+                              //you are able to display its jobscope.
             }
         }
 
         System.out.println("Invalid NRIC or password.");
+        return null;
     }
     
 
@@ -180,9 +181,20 @@ public class BTOSystem {
         
         system.loadProjectDataFromFile("ProjectList.csv"); //Read the Project Data csv file
         
-        system.login();
+        User user = system.login();
+        if (user != null) {
+        	/* The line below is a method call to call the displayjobscope
+        	 * method of your individual roles jobscopes. Also
+        	 * We have to pass in the system object so that in 
+        	 * your respective role classes you will be able to 
+        	 * use the BTOSystem variables like accessing the
+        	 * projectList or userList.*/
+            user.displayJobscope(system); 
+                                          
+        }
+
         
-        System.out.println(system.projectList.get(0).getProjName());
+        
     }
 }
 

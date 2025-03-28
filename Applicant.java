@@ -23,7 +23,7 @@ public class Applicant extends User{
 
     }
     
-    public void displayJobscope() {
+    public void displayJobscope(BTOSystem system) {
         System.out.println("Welcome, Applicant ");
         System.out.println("1. View Projects");
         System.out.println("2. Apply for Project");

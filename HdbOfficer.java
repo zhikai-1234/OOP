@@ -22,7 +22,7 @@ public class HdbOfficer extends User{
 
     }
     
-    public void displayJobscope() {
+    public void displayJobscope(BTOSystem system) {
         System.out.println("Welcome, Officer ");
         System.out.println("1. Apply project");
         System.out.println("2. Manage Project Allocation");

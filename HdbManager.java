@@ -1,3 +1,5 @@
+import java.util.Scanner;
+
 public class HdbManager extends User {
     private String[] managedProj;
     private String[] approvedOfficer;
@@ -6,8 +8,8 @@ public class HdbManager extends User {
         super(UserID, age, maritalStatus, password);
     }
     
-    public void createProj(){
-
+    public void createProj(BTOSystem system){
+        System.out.println("Creating");
     }
 
     public void editProj(){
@@ -26,10 +28,21 @@ public class HdbManager extends User {
 
     }
     
-    public void displayJobscope() {
+    public void displayJobscope(BTOSystem system) {
+    	
+        Scanner sc = new Scanner(System.in);
+        
         System.out.println("Welcome, Manager!");
-        System.out.println("1. Create or Edit Projects");
-        System.out.println("2. Toggle Project Visibility");
-        System.out.println("etc etc");
+        System.out.println("1. Create Projects");
+        System.out.println("2. Edit Projects");
+        
+        int choice = sc.nextInt();
+
+        if (choice == 1) {
+        	createProj(system);
+        }
+        
+        
+        
     }
 }

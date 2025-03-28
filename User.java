@@ -35,6 +35,6 @@
 
     }
     
-    public abstract void displayJobscope();
+    public abstract void displayJobscope(BTOSystem system);
     
 }
