@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.util.Scanner;
 
 public class BTOSystem {
@@ -44,7 +46,8 @@ public class BTOSystem {
                      System.out.println("Skipping malformed line: " + line);
                      continue;
                  }
-
+                 
+                 String name = parts[0].trim();
                  String UserID = parts[1].trim(); // NRIC
                  String age = parts[2].trim();
                  String maritalStatus = parts[3].trim();
@@ -53,11 +56,11 @@ public class BTOSystem {
                  User user = null;
 
                  if (role.equalsIgnoreCase("manager")) {
-                     user = new HdbManager(UserID, age, maritalStatus, password);
+                     user = new HdbManager(name, UserID, age, maritalStatus, password);
                  } else if (role.equalsIgnoreCase("applicant")) {
-                     user = new Applicant(UserID, age, maritalStatus, password);
+                     user = new Applicant(name, UserID, age, maritalStatus, password);
                  } else if (role.equalsIgnoreCase("officer")) {
-                     user = new HdbOfficer(UserID, age, maritalStatus, password);
+                     user = new HdbOfficer(name, UserID, age, maritalStatus, password);
                  }
 
                  if (user != null) {
@@ -103,11 +106,10 @@ public class BTOSystem {
                  String openDate = parts[8].trim();
                  String closeDate = parts[9].trim();
                  String manager = parts[10].trim();
-                 String officerSlots = parts[11].trim();
+                 int officerSlots = Integer.parseInt(parts[11].trim());
                  List<String> officers = Arrays.asList(parts[12].split("\\s*,\\s*"));
 
-                 Project project = new Project(projName, neighborhood, flatType1, units1, price1,
-                         flatType2, units2, price2, openDate, closeDate, manager, officerSlots, officers);
+                 Project project = new Project(projName, neighborhood, flatType1, units1, price1, flatType2, units2, price2, openDate, closeDate, manager, officerSlots, officers);
 
                  projectList.add(project);
              }
@@ -120,6 +122,42 @@ public class BTOSystem {
         	    System.out.println("Something went wrong.");
         	}
      }
+     
+     public void saveProjectsToFile(String filePath) {
+    	    try {
+    	        BufferedWriter writer = new BufferedWriter(new FileWriter(filePath));
+
+    	        // Write the header
+    	        writer.write("Project Name,Neighborhood,Type 1,Number of units for Type 1,Selling price for Type 1,Type 2,Number of units for Type 2,Selling price for Type 2,Application opening date,Application closing date,Manager,Officer Slot,Officer\n");
+
+    	        // Loop through the list directly using projectList.get(i)
+    	        for (int i = 0; i < projectList.size(); i++) {
+    	            String officerNames = String.join(",", projectList.get(i).getOfficers());
+
+    	            writer.write(
+    	                projectList.get(i).getProjName() + "," +
+    	                projectList.get(i).getNeighborhood() + "," +
+    	                projectList.get(i).getFlatType1() + "," +
+    	                projectList.get(i).getNumOfUnitsType1() + "," +
+    	                projectList.get(i).getPriceType1() + "," +
+    	                projectList.get(i).getFlatType2() + "," +
+    	                projectList.get(i).getNumOfUnitsType2() + "," +
+    	                projectList.get(i).getPriceType2() + "," +
+    	                projectList.get(i).getOpenDate() + "," +
+    	                projectList.get(i).getCloseDate() + "," +
+    	                projectList.get(i).getManagerName() + "," +
+    	                projectList.get(i).getOfficerSlots() + "," +
+    	                officerNames + "\n"
+    	            );
+    	        }
+
+    	        writer.close();
+    	        System.out.println("New HDB Project is created and updated to ProjectList.csv.");
+    	    } 
+    	    catch (Exception e) {
+    	        e.printStackTrace();  // <-- This will give you exact line and error type
+    	    }
+    	}
      
      /*For the login part the for loop is to iterate through all the 
       *objects created in the list and then match 1 by 1 until it finds the 
@@ -164,6 +202,10 @@ public class BTOSystem {
 
     public void loadProj(){
 
+    }
+    
+    public List<Project> getProjectList() {
+    	return projectList;
     }
     
     public static void main(String[] args) {

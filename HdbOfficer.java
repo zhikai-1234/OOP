@@ -2,8 +2,8 @@ public class HdbOfficer extends User{
     private String[] projHandled;
     private String registrationStatus;
     
-    public HdbOfficer(String UserID, String age, String maritalStatus, String password) {
-        super(UserID, age, maritalStatus, password);
+    public HdbOfficer(String name, String UserID, String age, String maritalStatus, String password) {
+        super(name, UserID, age, maritalStatus, password);
     }
     
     public void registerForProj(){

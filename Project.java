@@ -12,14 +12,14 @@ public class Project {
     private int numOfUnitsType2;
     private double priceType2;
     
-    private String openDate, closeDate;
+    private String openDate, closeDate; //save in the excel file as (yyyy-mm-dd)
     private String managerName;
-    private String officerSlots;
+    private int officerSlots;
     private List<String> officers;
     
     private boolean visibility;
     
-    public Project(String ProjName, String neighborhood, String flatType1, int numOfUnitsType1, double priceType1, String flatType2, int numOfUnitsType2, double priceType2, String openDate, String closeDate, String managerName, String officerSlots, List<String> officers) {
+    public Project(String ProjName, String neighborhood, String flatType1, int numOfUnitsType1, double priceType1, String flatType2, int numOfUnitsType2, double priceType2, String openDate, String closeDate, String managerName, int officerSlots, List<String> officers) {
     
     	this.ProjName = ProjName;
         this.neighborhood = neighborhood;
@@ -136,11 +136,11 @@ public class Project {
         this.managerName = managerName;
     }
 
-    public String getOfficerSlots() {
+    public int getOfficerSlots() {
         return officerSlots;
     }
 
-    public void setOfficerSlots(String officerSlots) {
+    public void setOfficerSlots(int officerSlots) {
         this.officerSlots = officerSlots;
     }
 

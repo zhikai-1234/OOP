@@ -3,8 +3,8 @@ public class Applicant extends User{
     private String applicationStatus;
     private String[] enquiryList;
     
-    public Applicant(String UserID, String age, String maritalStatus, String password) {
-        super(UserID, age, maritalStatus, password);
+    public Applicant(String name, String UserID, String age, String maritalStatus, String password) {
+        super(name, UserID, age, maritalStatus, password);
     }
 
     public void applyForProject(){
