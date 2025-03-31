@@ -12,7 +12,7 @@ public class Project {
     private int numOfUnitsType2;
     private double priceType2;
     
-    private String openDate, closeDate; //save in the excel file as (yyyy-mm-dd)
+    private String openDate, closeDate; //save in the CSV file as (yyyy-mm-dd)
     private String managerName;
     private int officerSlots;
     private List<String> officers;
