@@ -46,6 +46,11 @@ public class HdbManager extends User {
         System.out.print("Enter Application Closing Date (yyyy-mm-dd): ");
         String closingDate = scanner.nextLine();
         
+        if (checkDateConflict(openingDate, closingDate, system, null)) {
+            System.out.println("You are already managing a project during this application period.");
+            return;
+        }
+        
         String managerName = this.getName();
         
         System.out.print("Enter number of Officer slots: ");
@@ -75,11 +80,12 @@ public class HdbManager extends User {
     	choice = choice - 1;
     	scanner.nextLine();
     	
-    	Project editProj = system.getProjectList().get(choice);
+    	Project editProject = system.getProjectList().get(choice);
+    	
 
         boolean editing = true;
         while (editing) {
-            System.out.println("\nEditing project: " + editProj.getProjName());
+            System.out.println("\nEditing project: " + editProject.getProjName());
             System.out.println("What would you like to edit?");
             System.out.println("1. Project Name");
             System.out.println("2. Neighborhood");
@@ -101,63 +107,73 @@ public class HdbManager extends User {
             switch (option) {
                 case 1:
                     System.out.print("Enter new project name: ");
-                    editProj.setProjName(scanner.nextLine());
+                    editProject.setProjName(scanner.nextLine());
                     break;
                 case 2:
                     System.out.print("Enter new neighborhood: ");
-                    editProj.setNeighborhood(scanner.nextLine());
+                    editProject.setNeighborhood(scanner.nextLine());
                     break;
                 case 3:
                     System.out.print("Enter new type 1: ");
-                    editProj.setFlatType1(scanner.nextLine());
+                    editProject.setFlatType1(scanner.nextLine());
                     break;
                 case 4:
                     System.out.print("Enter new number of units for type 1: ");
-                    editProj.setNumOfUnitsType1(scanner.nextInt());
+                    editProject.setNumOfUnitsType1(scanner.nextInt());
                     scanner.nextLine();
                     break;
                 case 5:
                     System.out.print("Enter new selling price for type 1: ");
-                    editProj.setPriceType1(scanner.nextDouble());
+                    editProject.setPriceType1(scanner.nextDouble());
                     scanner.nextLine();
                     break;
                 case 6:
                     System.out.print("Enter new type 2: ");
-                    editProj.setFlatType2(scanner.nextLine());
+                    editProject.setFlatType2(scanner.nextLine());
                     break;
                 case 7:
                     System.out.print("Enter new number of units for type 2: ");
-                    editProj.setNumOfUnitsType2(scanner.nextInt());
+                    editProject.setNumOfUnitsType2(scanner.nextInt());
                     scanner.nextLine();
                     break;
                 case 8:
                     System.out.print("Enter new selling price for type 2: ");
-                    editProj.setPriceType2(scanner.nextDouble());
+                    editProject.setPriceType2(scanner.nextDouble());
                     scanner.nextLine();
                     break;
                 case 9:
                     System.out.print("Enter new application opening date (yyyy-mm-dd): ");
-                    editProj.setOpenDate(scanner.nextLine());
+                    editProject.setOpenDate(scanner.nextLine());
                     break;
                 case 10:
                     System.out.print("Enter new application closing date (yyyy-mm-dd): ");
-                    editProj.setCloseDate(scanner.nextLine());
+                    editProject.setCloseDate(scanner.nextLine());
                     break;
                 case 11:
                     System.out.print("Enter new officer slot: ");
-                    editProj.setOfficerSlots(scanner.nextInt());
+                    editProject.setOfficerSlots(scanner.nextInt());
                     scanner.nextLine();
                     break;
                 case 12:
-                    editing = false;
-                    break;
+                	String newOpeningDate = editProject.getOpenDate();
+                	String newClosingDate = editProject.getCloseDate();
+                	
+                	if(checkDateConflict(newOpeningDate, newClosingDate, system, editProject)) {
+                		System.out.println("You are already managing another project during this period.");
+                	    return;
+                	}
+                	
+                	else { 
+                        editing = false;
+                        System.out.println("Changes has been made.");
+                        system.saveProjectsToFile("ProjectList.csv"); 
+                	}
+                	break;
                 default:
                     System.out.println("Invalid option. Please try again.");
             }
         }
-        
-        System.out.println("Changes has been made.");
-        system.saveProjectsToFile("ProjectList.csv");
+                
     }
     	
 
@@ -165,7 +181,7 @@ public class HdbManager extends User {
     	
     	Scanner scanner = new Scanner(System.in);
     	
-    	System.out.println("Here are all the projects to be edited: ");
+    	System.out.println("Here are all the projects that can be deleted: ");
     	for(int i = 0; i < system.getProjectList().size(); i++) {
     		System.out.println((i+1) + ") "+ system.getProjectList().get(i).getProjName());
     	}
@@ -180,6 +196,31 @@ public class HdbManager extends User {
     	System.out.println("Project will be deleted.");
     	system.saveProjectsToFile("ProjectList.csv");
     	
+    }
+    
+    public boolean checkDateConflict(String newOpeningDate, String newClosingDate, BTOSystem system, Project editProject) {
+        
+    	List<Project> projectList = system.getProjectList();
+    	
+    	for (int i = 0; i < projectList.size(); i++) {
+            Project existingProj = projectList.get(i);
+            
+            /*Iterate the projectList to match 1 by 1 if the Manager has already been assigned to a project
+            if manager is assigned already, check if that HDBproject is the one that is currently being edited, 
+            if its not then start checking if the dates overlap.*/
+            if (existingProj.getManagerName().equalsIgnoreCase(this.getName()) && existingProj != editProject) {
+            	
+                String existingOpen = existingProj.getOpenDate();
+                String existingClose = existingProj.getCloseDate();
+                
+                /*Comparing Strings of the Date to see if the existing project will overlap with the 
+                 *newly created/edited Project application dates*/
+                if (existingOpen.compareTo(newClosingDate) <= 0 && existingClose.compareTo(newOpeningDate) >= 0) {
+                        return true;
+                }
+    	    }
+        }
+    	return false;
     }
 
     public void approveOfficerRegistration(){
