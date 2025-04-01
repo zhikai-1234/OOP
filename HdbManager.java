@@ -61,9 +61,104 @@ public class HdbManager extends User {
         
     }
 
-    public void editProj(){
+    public void editProj(BTOSystem system){
+    	
+    	Scanner scanner = new Scanner(System.in);
+    	
+    	System.out.println("Here are all the projects to be edited: ");
+    	for(int i = 0; i < system.getProjectList().size(); i++) {
+    		System.out.println((i+1) + ") "+ system.getProjectList().get(i).getProjName());
+    	}
+    	
+    	System.out.println("Enter which project to be edited (Enter the Numerical Value): ");
+    	int choice = scanner.nextInt();
+    	choice = choice - 1;
+    	scanner.nextLine();
+    	
+    	Project editProj = system.getProjectList().get(choice);
 
+        boolean editing = true;
+        while (editing) {
+            System.out.println("\nEditing project: " + editProj.getProjName());
+            System.out.println("What would you like to edit?");
+            System.out.println("1. Project Name");
+            System.out.println("2. Neighborhood");
+            System.out.println("3. Type 1");
+            System.out.println("4. Number of units for Type 1");
+            System.out.println("5. Selling price for Type 1");
+            System.out.println("6. Type 2");
+            System.out.println("7. Number of units for Type 2");
+            System.out.println("8. Selling price for Type 2");
+            System.out.println("9. Application opening date");
+            System.out.println("10. Application closing date");
+            System.out.println("11. Officer Slot");
+            System.out.println("12. Save and Exit");
+
+            System.out.print("Choose an option: ");
+            int option = scanner.nextInt();
+            scanner.nextLine(); 
+
+            switch (option) {
+                case 1:
+                    System.out.print("Enter new project name: ");
+                    editProj.setProjName(scanner.nextLine());
+                    break;
+                case 2:
+                    System.out.print("Enter new neighborhood: ");
+                    editProj.setNeighborhood(scanner.nextLine());
+                    break;
+                case 3:
+                    System.out.print("Enter new type 1: ");
+                    editProj.setFlatType1(scanner.nextLine());
+                    break;
+                case 4:
+                    System.out.print("Enter new number of units for type 1: ");
+                    editProj.setNumOfUnitsType1(scanner.nextInt());
+                    scanner.nextLine();
+                    break;
+                case 5:
+                    System.out.print("Enter new selling price for type 1: ");
+                    editProj.setPriceType1(scanner.nextDouble());
+                    scanner.nextLine();
+                    break;
+                case 6:
+                    System.out.print("Enter new type 2: ");
+                    editProj.setFlatType2(scanner.nextLine());
+                    break;
+                case 7:
+                    System.out.print("Enter new number of units for type 2: ");
+                    editProj.setNumOfUnitsType2(scanner.nextInt());
+                    scanner.nextLine();
+                    break;
+                case 8:
+                    System.out.print("Enter new selling price for type 2: ");
+                    editProj.setPriceType2(scanner.nextDouble());
+                    scanner.nextLine();
+                    break;
+                case 9:
+                    System.out.print("Enter new application opening date (yyyy-mm-dd): ");
+                    editProj.setOpenDate(scanner.nextLine());
+                    break;
+                case 10:
+                    System.out.print("Enter new application closing date (yyyy-mm-dd): ");
+                    editProj.setCloseDate(scanner.nextLine());
+                    break;
+                case 11:
+                    System.out.print("Enter new officer slot: ");
+                    editProj.setOfficerSlots(scanner.nextInt());
+                    scanner.nextLine();
+                    break;
+                case 12:
+                    editing = false;
+                    break;
+                default:
+                    System.out.println("Invalid option. Please try again.");
+            }
+        }
+
+        system.saveProjectsToFile("ProjectList.csv");
     }
+    	
 
     public void deleteProj(){
 
@@ -90,6 +185,10 @@ public class HdbManager extends User {
         if (choice == 1) {
         	createProj(system);
         }
+        if (choice == 2) {
+        	editProj(system);
+        }
+        
         
         
         
