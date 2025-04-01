@@ -155,13 +155,31 @@ public class HdbManager extends User {
                     System.out.println("Invalid option. Please try again.");
             }
         }
-
+        
+        System.out.println("Changes has been made.");
         system.saveProjectsToFile("ProjectList.csv");
     }
     	
 
-    public void deleteProj(){
-
+    public void deleteProj(BTOSystem system){
+    	
+    	Scanner scanner = new Scanner(System.in);
+    	
+    	System.out.println("Here are all the projects to be edited: ");
+    	for(int i = 0; i < system.getProjectList().size(); i++) {
+    		System.out.println((i+1) + ") "+ system.getProjectList().get(i).getProjName());
+    	}
+    	
+    	System.out.println("Enter which project to be deleted (Enter the Numerical Value): ");
+    	int choice = scanner.nextInt();
+    	choice = choice - 1;
+    	scanner.nextLine();
+    	
+    	system.getProjectList().remove(choice); 
+    	
+    	System.out.println("Project will be deleted.");
+    	system.saveProjectsToFile("ProjectList.csv");
+    	
     }
 
     public void approveOfficerRegistration(){
@@ -169,7 +187,6 @@ public class HdbManager extends User {
     }
 
     public void approveApplicantApplication(){
-
     }
     
     public void displayJobscope(BTOSystem system) {
@@ -179,6 +196,7 @@ public class HdbManager extends User {
         System.out.println("Welcome, Manager!");
         System.out.println("1. Create Projects");
         System.out.println("2. Edit Projects");
+        System.out.println("3. Delete Projects");
         
         int choice = scanner.nextInt();
 
@@ -188,9 +206,9 @@ public class HdbManager extends User {
         if (choice == 2) {
         	editProj(system);
         }
-        
-        
-        
-        
+        if (choice == 3) {
+        	deleteProj(system);
+        }
+              
     }
 }

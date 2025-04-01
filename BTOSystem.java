@@ -152,7 +152,7 @@ public class BTOSystem {
     	        }
 
     	        writer.close();
-    	        System.out.println("New HDB Project is created and updated to ProjectList.csv.");
+    	        System.out.println("HDB Project list has been updated.");
     	    } 
     	    catch (Exception e) {
     	        e.printStackTrace();  // <-- This will give you exact line and error type
