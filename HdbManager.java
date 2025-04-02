@@ -69,18 +69,19 @@ public class HdbManager extends User {
     public void editProj(BTOSystem system){
     	
     	Scanner scanner = new Scanner(System.in);
+    	List<Project> myProjects = filteredProj(system);
     	
-    	System.out.println("Here are all the projects to be edited: ");
-    	for(int i = 0; i < system.getProjectList().size(); i++) {
-    		System.out.println((i+1) + ") "+ system.getProjectList().get(i).getProjName());
+    	if(myProjects.isEmpty()) {
+    		return;
     	}
+    	System.out.println("Above are all the projects that you are in charged of to be edited.");
     	
     	System.out.println("Enter which project to be edited (Enter the Numerical Value): ");
     	int choice = scanner.nextInt();
     	choice = choice - 1;
     	scanner.nextLine();
     	
-    	Project editProject = system.getProjectList().get(choice);
+    	Project editProject = myProjects.get(choice);
     	
 
         boolean editing = true;
@@ -162,7 +163,6 @@ public class HdbManager extends User {
                 		System.out.println("You are already managing another project during this period.");
                 	    return;
                 	}
-                	
                 	else { 
                         editing = false;
                         System.out.println("Changes has been made.");
@@ -172,26 +172,26 @@ public class HdbManager extends User {
                 default:
                     System.out.println("Invalid option. Please try again.");
             }
-        }
-                
+        }            
     }
     	
-
     public void deleteProj(BTOSystem system){
     	
     	Scanner scanner = new Scanner(System.in);
+    	List<Project> myProjects = filteredProj(system);
     	
-    	System.out.println("Here are all the projects that can be deleted: ");
-    	for(int i = 0; i < system.getProjectList().size(); i++) {
-    		System.out.println((i+1) + ") "+ system.getProjectList().get(i).getProjName());
-    	}
+    	if(myProjects.isEmpty()) {
+    		return;
+    	}  	
     	
+    	System.out.println("Above are all the projects that you are in charged of that can be deleted.");
+
     	System.out.println("Enter which project to be deleted (Enter the Numerical Value): ");
     	int choice = scanner.nextInt();
     	choice = choice - 1;
     	scanner.nextLine();
     	
-    	system.getProjectList().remove(choice); 
+    	system.getProjectList().remove(myProjects.get(choice));
     	
     	System.out.println("Project will be deleted.");
     	system.saveProjectsToFile("ProjectList.csv");
@@ -222,6 +222,84 @@ public class HdbManager extends User {
         }
     	return false;
     }
+    
+    public List<Project> filteredProj(BTOSystem system){
+    	
+        List<Project> allProjects = system.getProjectList();
+        List<Project> filtered = new ArrayList<>(); 
+        
+        System.out.println("\nProjects you're managing:");
+        
+        int count = 1;
+        
+        for (int i = 0; i < allProjects.size(); i++) {
+        	
+            Project p = allProjects.get(i);
+            
+            /* This iterate through the full list of BTO projects in the system.
+             * For each project, it checks if the manager in charge matches the current logged-in manager.
+             * If it matches, the project is printed and added to the filtered list.
+             * It also return the filtered list so that it can be used in the editProj() and deleteProj()
+             * to ensure the Managers can only edit and delete the projects that their handling.*/
+            if (p.getManagerName().equalsIgnoreCase(this.getName())) {
+                System.out.println("---------------------------------------");
+                System.out.println(count + ") " + p.getProjName());
+                System.out.println("Neighborhood: " + p.getNeighborhood());
+                System.out.println();
+                System.out.println("Flat Type 1: " + p.getFlatType1());
+                System.out.println("Units: " + p.getNumOfUnitsType1());
+                System.out.println("Price: $" + p.getPriceType1());
+                System.out.println();
+                System.out.println("Flat Type 2: " + p.getFlatType2());
+                System.out.println("Units: " + p.getNumOfUnitsType2());
+                System.out.println("Price: $" + p.getPriceType2());
+                System.out.println();
+                System.out.println("Application Period: " + p.getOpenDate() + " to " + p.getCloseDate());
+                System.out.println("Officer Slots: " + p.getOfficerSlots());
+                System.out.println("Officers Assigned: " + String.join(", ", p.getOfficers()));
+                System.out.println("---------------------------------------");
+                filtered.add(p);
+                count++;
+            }
+        }
+        if(filtered.isEmpty()) {
+        	System.out.println("You currently are not in charged of any Projects.");
+        }
+        return filtered; //return the filtered List to be used in the editProj() and deleteProj().  
+    }
+    
+    public void viewAllProj(BTOSystem system) {
+        List<Project> allProjects = system.getProjectList();
+
+        if (allProjects.isEmpty()) {
+            System.out.println("There are no projects available at this point of time.");
+            return;
+        }
+        
+        System.out.println();
+        System.out.println("List of all current projects:");
+        for (int i = 0; i < allProjects.size(); i++) {
+            Project p = allProjects.get(i);
+            System.out.println("--------------------------------------------------");
+            System.out.println("Project " + (i + 1));
+            System.out.println("Name: " + p.getProjName());
+            System.out.println("Neighborhood: " + p.getNeighborhood());
+            System.out.println();
+            System.out.println("Flat Type 1: " + p.getFlatType1());
+            System.out.println("Units: " + p.getNumOfUnitsType1());
+            System.out.println("Price: $" + p.getPriceType1());
+            System.out.println();
+            System.out.println("Flat Type 2: " + p.getFlatType2());
+            System.out.println("Units: " + p.getNumOfUnitsType2());
+            System.out.println("Price: $" + p.getPriceType2());
+            System.out.println();
+            System.out.println("Application Period: " + p.getOpenDate() + " to " + p.getCloseDate());
+            System.out.println("Manager in charged: " + p.getManagerName());
+            System.out.println("Officer Slots: " + p.getOfficerSlots());
+            System.out.println("Officers Assigned: " + String.join(", ", p.getOfficers()));
+            System.out.println("--------------------------------------------------");
+        }
+    }
 
     public void approveOfficerRegistration(){
 
@@ -238,6 +316,9 @@ public class HdbManager extends User {
         System.out.println("1. Create Projects");
         System.out.println("2. Edit Projects");
         System.out.println("3. Delete Projects");
+        System.out.println("4. View all Projects");
+        System.out.println("5. View your own Projects");
+        
         
         int choice = scanner.nextInt();
 
@@ -249,6 +330,14 @@ public class HdbManager extends User {
         }
         if (choice == 3) {
         	deleteProj(system);
+        }
+        	
+        if (choice == 4) {
+        	viewAllProj(system);
+        }
+    
+        if (choice == 5) {
+        	filteredProj(system);
         }
               
     }

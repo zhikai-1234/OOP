@@ -37,7 +37,7 @@ public class BTOSystem {
 
              while ((line = reader.readLine()) != null) {
                  if (isFirstLine) {
-                     isFirstLine = false; // skip header
+                     isFirstLine = false; 
                      continue;
                  }
 
@@ -48,7 +48,7 @@ public class BTOSystem {
                  }
                  
                  String name = parts[0].trim();
-                 String UserID = parts[1].trim(); // NRIC
+                 String UserID = parts[1].trim(); // nric
                  String age = parts[2].trim();
                  String maritalStatus = parts[3].trim();
                  String password = parts[4].trim();
@@ -107,7 +107,14 @@ public class BTOSystem {
                  String closeDate = parts[9].trim();
                  String manager = parts[10].trim();
                  int officerSlots = Integer.parseInt(parts[11].trim());
-                 List<String> officers = Arrays.asList(parts[12].split("\\s*,\\s*"));
+                 String raw = parts[12].trim();
+                 List<String> officers = new ArrayList<>();
+                 if (!raw.isEmpty()) {
+                     officers = Arrays.asList(raw.split("\\|")); //Instead of "Daniel,Emily" in the CSV,
+                                                                 //change to "Daniel|Emily"
+                                                                 //because of the line.split(",").
+                 }
+
 
                  Project project = new Project(projName, neighborhood, flatType1, units1, price1, flatType2, units2, price2, openDate, closeDate, manager, officerSlots, officers);
 
@@ -132,7 +139,7 @@ public class BTOSystem {
 
     	        // Loop through the list directly using projectList.get(i)
     	        for (int i = 0; i < projectList.size(); i++) {
-    	            String officerNames = String.join(",", projectList.get(i).getOfficers());
+    	            String officerNames = String.join("|", projectList.get(i).getOfficers());
 
     	            writer.write(
     	                projectList.get(i).getProjName() + "," +
