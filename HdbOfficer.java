@@ -32,6 +32,12 @@ public class HdbOfficer extends User {
 
     }
 
+    // added 3/4
+    public void showRegistrationStatus() {
+        System.out.println("Registration status: ", this.registrationStatus);
+    }
+
+    // should be under manager
     public void approveRegistration(String projectName) {
         this.assignedProject = projectName;
         this.isApproved = true;
