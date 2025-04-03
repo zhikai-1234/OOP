@@ -10,7 +10,7 @@ public class Enquiry {
 
     public Enquiry(int uID, int pID) {
         this.enquireText = "No enquiry";
-        this.enquiryResponse = "No Response";
+        this.enquiryResponse = "No response";
         this.userID = uID;
         this.projectID = pID;
     }
@@ -22,16 +22,29 @@ public class Enquiry {
         }
         else {
             System.out.println("Would you like to edit your inquiry? (Y/N)");
-            this.enquireText = sc.nextLine();
+            this.editChoice = sc.nextLine();
+            if (this.editChoice.equalsIgnoreCase("y")) {
+                this.editEnquiry();
+            }
+            else {
+                System.out.println("Enquiry exited");
+            }
         }
     }
         
-    public void editEnquiry(){
+    public void editEnquiry() {
         System.out.print("Enter your new inquiry: ");
         this.enquireText = sc.nextLine();
     }
 
-    //public void deleteEnquiry(){}
+    public void deleteEnquiry() {
+        if (this.enquireText.equals("No enquiry")) {
+            System.out.println("Enquiry is empty");
+        }
+        else {
+            System.out.println("Enquiry deleted.");
+        }
+    }
 
     public void showEnquiry() {
         System.out.printf("%-10s %-10s\n", "User ID", "Project ID");
