@@ -39,6 +39,9 @@ public class Project {
     public void toggleVisibility(){
 
     }
+    public boolean getVisibility(){
+        return this.visibility;
+    }
     
     public void viewApplicants(){
 
