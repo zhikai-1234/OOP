@@ -6,23 +6,26 @@ public class Applicant extends User{
     public String projApplied;
     public String applicationStatus;
     public String[] enquiryList;
+    private int eligibilityStatus;
     Scanner scan = new Scanner(System.in);
 
     public Applicant(String name, String UserID, String age, String maritalStatus, String password) {
         super(name, UserID, age, maritalStatus, password);
+        this.eligibilityStatus = checkEligibility();
+    }
+    public int getEligibilityStatus(){
+        return eligibilityStatus;
     }
 
-    public void ViewProj(Project[] projects){
-        for(Project project : projects){
-            if(project.getVisibility()){
-                if(this.getMaritalStatus().equals("Single") && Integer.parseInt(this.getAge()) >= 35){
-                    System.out.println("Viewing Project: "+project.getProjName() + ", Type: " + project.getFlatType1());
-                }
-                else if(this.getMaritalStatus().equals("Married") && Integer.parseInt(this.getAge()) >=21){
-                    System.out.println("Viewing Projects: " + project.getProjName() + ", Types: "+project.getFlatType1()+ ", "+project.getFlatType2());
-                }           
-             }
+    private int checkEligibility(){
+        int age = Integer.parseInt(this.getAge());
+        if(this.getMaritalStatus().equals("Single") && age >= 35){
+            return 1;
         }
+        else if(this.getMaritalStatus().equals("Married") && age >= 21){
+            return 2;
+        }
+        return 0;
     }
 
     public void applyForProject(Project project){
@@ -69,9 +72,12 @@ public class Applicant extends User{
         System.out.println("5. Send Enquires");
 
         int choice = scan.nextInt();
-
+        FlatBooking flatBooking = new FlatBooking();
         switch (choice){
-            case 1: viewProj(); break;
+            case 1: List<Project> projectList = system.getProjectList();  // Assuming getProjectList() returns List<Project>
+                    Project[] projectsArray = projectList.toArray(new Project[0]);  // Convert to array
+                    flatBooking.viewProject(this, projectsArray); // Use the instance to call viewProj
+            break;
             case 2: applyForProject(null);
         }
 
