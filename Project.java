@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.List;
 
 public class Project {
@@ -18,6 +19,9 @@ public class Project {
     private List<String> officers;
     
     private boolean visibility;
+
+    private List<Applicant> applicantsForType1;
+    private List<Applicant> applicantsForType2;
     
     public Project(String ProjName, String neighborhood, String flatType1, int numOfUnitsType1, double priceType1, String flatType2, int numOfUnitsType2, double priceType2, String openDate, String closeDate, String managerName, int officerSlots, List<String> officers) {
     
@@ -34,6 +38,8 @@ public class Project {
         this.managerName = managerName;
         this.officerSlots = officerSlots;
         this.officers = officers;
+        this.applicantsForType1 = new ArrayList<>();
+        this.applicantsForType2 = new ArrayList<>();
     }
 
     public void toggleVisibility(){
@@ -153,6 +159,14 @@ public class Project {
 
     public void setOfficers(List<String> officers) {
         this.officers = officers;
+    }
+
+    public void addApplicant(Applicant applicant, int flatType) {
+        if (flatType == 1) {
+            applicantsForType1.add(applicant); 
+        } else if (flatType == 2) {
+            applicantsForType2.add(applicant);
+        }
     }
 
 }

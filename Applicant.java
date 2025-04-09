@@ -28,28 +28,47 @@ public class Applicant extends User{
         return 0;
     }
 
-    public void applyForProject(Project project){
-        if(projApplied != null){
-            System.out.println("You have already applied for an project.");
-            return;
-        }
-
-        if(this.getMaritalStatus().equals("Single") && Integer.parseInt(this.getAge()) >= 35){
-            if(project.getFlatType1().equals("2-Room")){
-                projApplied = project.getProjName();
-                applicationStatus = "Applied";
-                System.out.println("You have sucessfully applied for "+project.getProjName() + "(2-Room).");
-            }
-            else if (this.getMaritalStatus().equals("Married") && Integer.parseInt(this.getAge()) >=  21){
-                projApplied = project.getProjName();
-                applicationStatus = "Applied";
-                System.out.println("You have sucessfully applied for "+project.getProjName() + "(2-Room).");
-            }
-            else{
-                System.out.println("You do not meet the age or martial status requirement to apply. ");
-            }
-        }
+    public void applyForProject(Project project, String flatType){
+    if(projApplied != null){
+        System.out.println("You have already applied for an project.");
+        return;
     }
+
+    if (eligibilityStatus == 1 && flatType.equals("2-Room")) {
+        projApplied = project.getProjName();
+        applicationStatus = "Applied";
+        project.addApplicant(this, 1);  // Add applicant to 2-Room list
+        System.out.println("You have successfully applied for " + project.getProjName() + " (2-Room).");
+    } else if (eligibilityStatus == 2) {  // Eligibility 2: can apply for both 2-Room and 3-Room
+        if (flatType.equals("2-Room")) {
+            projApplied = project.getProjName();
+            applicationStatus = "Applied";
+            project.addApplicant(this, 1);  // Add to 2-Room applicants list
+            System.out.println("You have successfully applied for " + project.getProjName() + " (2-Room).");
+        } else if (flatType.equals("3-Room")) {
+            projApplied = project.getProjName();
+            applicationStatus = "Applied";
+            project.addApplicant(this, 2);  // Add to 3-Room applicants list
+            System.out.println("You have successfully applied for " + project.getProjName() + " (3-Room).");
+        }
+    } else {
+        System.out.println("You do not meet the eligibility requirements.");
+    }
+}
+
+public String getUserID() {
+    return getUserID();
+}
+
+public String getProjApplied() {
+    return projApplied;
+}
+
+public String getName() {
+    return getName();
+}
+
+
 
     public void viewStatus(){
 
@@ -73,12 +92,16 @@ public class Applicant extends User{
 
         int choice = scan.nextInt();
         FlatBooking flatBooking = new FlatBooking();
+        List<Project> projectList = system.getProjectList();  // Assuming getProjectList() returns List<Project>
+        Project[] projectsArray = projectList.toArray(new Project[0]);  // Convert to array
         switch (choice){
-            case 1: List<Project> projectList = system.getProjectList();  // Assuming getProjectList() returns List<Project>
-                    Project[] projectsArray = projectList.toArray(new Project[0]);  // Convert to array
-                    flatBooking.viewProject(this, projectsArray); // Use the instance to call viewProj
-            break;
-            case 2: applyForProject(null);
+            case 1: 
+                    flatBooking.viewProjects(this, projectsArray);
+                    break;
+
+            case 2: 
+                    flatBooking.selectProject(this, projectsArray);
+                    break;
         }
 
 
