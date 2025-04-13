@@ -168,5 +168,26 @@ public class Project {
             applicantsForType2.add(applicant);
         }
     }
+    
+    public void displayProjectDetails() {
+        System.out.println("---------------------------------------");
+        System.out.println("Project Name: " + ProjName);
+        System.out.println("Neighborhood: " + neighborhood);
+        System.out.println();
+        System.out.println("Flat Type 1: " + flatType1);
+        System.out.println("Units: " + numOfUnitsType1);
+        System.out.println("Price: $" + priceType1);
+        System.out.println();
+        System.out.println("Flat Type 2: " + flatType2);
+        System.out.println("Units: " + numOfUnitsType2);
+        System.out.println("Price: $" + priceType2);
+        System.out.println();
+        System.out.println("Application Period: " + openDate + " to " + closeDate);
+        System.out.println("Manager in charged: " + managerName);
+        System.out.println("Officer Slots: " + officerSlots);
+        System.out.println("Officers Assigned: " + String.join(", ", officers));
+        System.out.println("---------------------------------------");
+    }
+
 
 }
