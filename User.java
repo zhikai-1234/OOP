@@ -2,6 +2,8 @@
 	                         //so that everyone is either a Applicant, Manager or Officer
 	 
     private String name, UserID, password, age, maritalStatus;
+    private String assignedProject;
+    private String flatType;
     
     public User(String name, String UserID, String age, String maritalStatus, String password) {
         
@@ -32,14 +34,23 @@
         return maritalStatus;
     }
 
-    public void changePassword(){
-
+    public void changePassword(String newPassword){
+	    this.password = newPassword;
     }
 
     public void viewProj(){
-
+	    System.out.println("Viewing projects...");
     }
-    
+	 
+    public void setAssignedProject(String assignedProject) {
+    this.assignedProject = assignedProject;
+    }
+
+    public void setFlatType(String flatType) {
+    this.flatType = flatType;
+    }
+
+	 
     public abstract void displayJobscope(BTOSystem system);
     
 }
