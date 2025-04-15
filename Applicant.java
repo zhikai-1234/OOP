@@ -3,10 +3,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Applicant extends User{
-    public String projApplied;
+    private Project projApplied;
     public String applicationStatus;
-    public String[] enquiryList;
+    private List<Enquiry> enquiryList = new ArrayList<>();
     private int eligibilityStatus;
+    private int appliedFlatType;
     Scanner scan = new Scanner(System.in);
 
     public Applicant(String name, String UserID, String age, String maritalStatus, String password) {
@@ -34,49 +35,74 @@ public class Applicant extends User{
         return;
     }
 
-    if (eligibilityStatus == 1 && flatType.equals("2-Room")) {
-        projApplied = project.getProjName();
-        applicationStatus = "Applied";
-        project.addApplicant(this, 1);  // Add applicant to 2-Room list
-        System.out.println("You have successfully applied for " + project.getProjName() + " (2-Room).");
-    } else if (eligibilityStatus == 2) {  // Eligibility 2: can apply for both 2-Room and 3-Room
-        if (flatType.equals("2-Room")) {
-            projApplied = project.getProjName();
+        if (eligibilityStatus == 1 && flatType.equals("2-Room")) {
+            this.projApplied = project;
+            appliedFlatType = 1;
             applicationStatus = "Applied";
-            project.addApplicant(this, 1);  // Add to 2-Room applicants list
+            project.addApplicant(this, 1);  // Add applicant to 2-Room list
             System.out.println("You have successfully applied for " + project.getProjName() + " (2-Room).");
-        } else if (flatType.equals("3-Room")) {
-            projApplied = project.getProjName();
-            applicationStatus = "Applied";
-            project.addApplicant(this, 2);  // Add to 3-Room applicants list
-            System.out.println("You have successfully applied for " + project.getProjName() + " (3-Room).");
+        } else if (eligibilityStatus == 2) {  // Eligibility 2: can apply for both 2-Room and 3-Room
+            if (flatType.equals("2-Room")) {
+                appliedFlatType = 1;
+                this.projApplied = project;
+                applicationStatus = "Applied";
+                project.addApplicant(this, 1);  // Add to 2-Room applicants list
+                System.out.println("You have successfully applied for " + project.getProjName() + " (2-Room).");
+            } else if (flatType.equals("3-Room")) {
+                this.projApplied = project;
+                appliedFlatType = 2; 
+                applicationStatus = "Applied";
+                project.addApplicant(this, 2);  // Add to 3-Room applicants list
+                System.out.println("You have successfully applied for " + project.getProjName() + " (3-Room).");
+            }
+        } else {
+            System.out.println("You do not meet the eligibility requirements.");
         }
-    } else {
-        System.out.println("You do not meet the eligibility requirements.");
     }
-}
 
-public String getUserID() {
-    return getUserID();
-}
+    public String getUserID() {
+        return super.getUserID();
+    }
 
-public String getProjApplied() {
-    return projApplied;
-}
+    public Project getProjApplied() {
+        return projApplied;
+    }
 
-public String getName() {
-    return getName();
-}
+    public String getName() {
+        return super.getName();
+    }
 
 
 
     public void viewStatus(){
+        if (projApplied == null) {
+            System.out.println("You have not applied for any project.");
+        } else {
+            System.out.println("Project: " + projApplied.getProjName());
+            System.out.println("Status: " + applicationStatus);
+    }
+}
 
+    public void setApplicationStatus(String status) {
+        this.applicationStatus = status;
     }
 
-    public void withdrawApplication(){
+    public void withdrawApplication() {
+        if (projApplied == null) {
+            System.out.println("You have not applied for any project.");
+            return;
+        }
 
+        else{
+            projApplied.removeApplicant(this, appliedFlatType);
+            projApplied = null;
+            applicationStatus = null;
+        
+            System.out.println("Your application has been successfully withdrawn.");
+        }
     }
+
+    
 
     public void bookFlat(){
 
@@ -101,6 +127,13 @@ public String getName() {
 
             case 2: 
                     flatBooking.selectProject(this, projectsArray);
+                    break;
+
+            case 3:
+                    viewStatus();
+                    break;
+            case 4: 
+                    withdrawApplication();
                     break;
         }
 
