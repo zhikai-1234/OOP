@@ -168,6 +168,19 @@ public class Project {
             applicantsForType2.add(applicant);
         }
     }
+    public void removeApplicant(Applicant applicant, int flatType) {
+        if (flatType == 1) {
+            if (applicantsForType1.contains(applicant)) {
+                applicantsForType1.remove(applicant);
+                System.out.println("Applicant removed from " + flatType1 + " list.");
+            }
+        } else if (flatType == 2) {
+            if (applicantsForType2.contains(applicant)) {
+                applicantsForType2.remove(applicant);
+                System.out.println("Applicant removed from " + flatType2 + " list.");
+            }
+        }
+    }
     
     public void displayProjectDetails() {
         System.out.println("---------------------------------------");
