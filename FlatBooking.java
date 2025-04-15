@@ -12,11 +12,11 @@ public class FlatBooking {
                 int eligibilityStatus = applicant.getEligibilityStatus();
 
                 if (eligibilityStatus == 1) { // Single and above 35
-                    if (project.getFlatType1().equals("2-Room")) {
+                    if (project.getFlatType1().equals("2-Room") && project.getVisibility()) {
                         System.out.println(count + ". " + project.getProjName() + " (2-Room)");
                         count++;
                     }
-                } else if (eligibilityStatus == 2) { // Married and above 21
+                } else if (eligibilityStatus == 2 && project.getVisibility()) { // Married and above 21
                     System.out.println(count + ". " + project.getProjName() + " (2-Room), (3-Room)");
                     count++;
                 } else{

@@ -60,17 +60,17 @@ public class Applicant extends User{
         }
     }
 
-    public String getUserID() {
-        return super.getUserID();
-    }
+public String getUserID() {
+    return super.getUserID();
+}
 
     public Project getProjApplied() {
         return projApplied;
     }
 
-    public String getName() {
-        return super.getName();
-    }
+public String getName() {
+    return super.getName(); //Same for this also.
+}
 
 
 

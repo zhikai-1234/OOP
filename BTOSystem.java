@@ -92,7 +92,7 @@ public class BTOSystem {
                  }
 
                  String[] parts = line.split(",", -1);
-                 if (parts.length < 13) {
+                 if (parts.length < 14) {
                      System.out.println("Skipping malformed line: " + line);
                      continue;
                  }
@@ -110,6 +110,7 @@ public class BTOSystem {
                  String manager = parts[10].trim();
                  int officerSlots = Integer.parseInt(parts[11].trim());
                  String raw = parts[12].trim();
+                 boolean visibility = Boolean.parseBoolean(parts[13].trim());
                  List<String> officers = new ArrayList<>();
                  if (!raw.isEmpty()) {
                      officers = Arrays.asList(raw.split("\\|")); //Instead of "Daniel,Emily" in the CSV,
@@ -118,7 +119,7 @@ public class BTOSystem {
                  }
 
 
-                 Project project = new Project(projName, neighborhood, flatType1, units1, price1, flatType2, units2, price2, openDate, closeDate, manager, officerSlots, officers);
+                 Project project = new Project(projName, neighborhood, flatType1, units1, price1, flatType2, units2, price2, openDate, closeDate, manager, officerSlots, officers, visibility);
 
                  projectList.add(project);
              }
@@ -137,7 +138,7 @@ public class BTOSystem {
     	        BufferedWriter writer = new BufferedWriter(new FileWriter(filePath));
 
     	        // Write the header
-    	        writer.write("Project Name,Neighborhood,Type 1,Number of units for Type 1,Selling price for Type 1,Type 2,Number of units for Type 2,Selling price for Type 2,Application opening date,Application closing date,Manager,Officer Slot,Officer\n");
+    	        writer.write("Project Name,Neighborhood,Type 1,Number of units for Type 1,Selling price for Type 1,Type 2,Number of units for Type 2,Selling price for Type 2,Application opening date,Application closing date,Manager,Officer Slot,Officer,Visibility\n");
 
     	        // Loop through the list directly using projectList.get(i)
     	        for (int i = 0; i < projectList.size(); i++) {
@@ -156,7 +157,8 @@ public class BTOSystem {
     	                projectList.get(i).getCloseDate() + "," +
     	                projectList.get(i).getManagerName() + "," +
     	                projectList.get(i).getOfficerSlots() + "," +
-    	                officerNames + "\n"
+    	                officerNames + "," +
+    	                projectList.get(i).getVisibility() + "\n"
     	            );
     	        }
 
