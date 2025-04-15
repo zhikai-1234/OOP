@@ -57,7 +57,8 @@ public class Applicant extends User{
 }
 
 public String getUserID() {
-    return getUserID();
+	//return  getUserID(); 
+    return super.getUserID(); //Hi, i changed this from that above line cause it caused recursion when i logged in as applicant
 }
 
 public String getProjApplied() {
@@ -65,7 +66,8 @@ public String getProjApplied() {
 }
 
 public String getName() {
-    return getName();
+	//return getName(); 
+    return super.getName(); //Same for this also.
 }
 
 

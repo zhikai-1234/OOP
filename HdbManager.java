@@ -55,11 +55,22 @@ public class HdbManager extends User {
         
         System.out.print("Enter number of Officer slots: ");
         int slots = scanner.nextInt();
+        scanner.nextLine();
+        
+        System.out.print("Set project visibility (1 = ON, 0 = OFF): ");
+        int visibilityInput = scanner.nextInt();
+        boolean visibility;
+        if (visibilityInput == 1) {
+            visibility = true;
+        } else {
+            visibility = false;
+        }
+
         
         List<String> officers = new ArrayList<>(); //putting it empty list first because
                                                    //need to approve or reject officers later
         
-        Project newProject = new Project(projName, neighborhood, type1, units1, price1, type2, units2, price2, openingDate, closingDate, managerName, slots, officers);
+        Project newProject = new Project(projName, neighborhood, type1, units1, price1, type2, units2, price2, openingDate, closingDate, managerName, slots, officers, visibility);
         
         system.getProjectList().add(newProject);
         system.saveProjectsToFile("ProjectList.csv");
@@ -99,7 +110,8 @@ public class HdbManager extends User {
             System.out.println("9. Application opening date");
             System.out.println("10. Application closing date");
             System.out.println("11. Officer Slot");
-            System.out.println("12. Save and Exit");
+            System.out.println("12. Visibility (1 for visible / 0 for hidden)");
+            System.out.println("13. Save and Exit");
 
             System.out.print("Choose an option: ");
             int option = scanner.nextInt();
@@ -156,6 +168,18 @@ public class HdbManager extends User {
                     scanner.nextLine();
                     break;
                 case 12:
+                	System.out.print("Enter visibility (1 for visible / 0 for hidden): ");
+                    int visInput = scanner.nextInt();
+                    scanner.nextLine();
+                    boolean visibility;
+                    if (visInput == 1) {
+                        visibility = true;
+                    } else {
+                        visibility = false;
+                    }
+                    editProject.setVisibility(visibility);
+                    break;
+                case 13:
                 	String newOpeningDate = editProject.getOpenDate();
                 	String newClosingDate = editProject.getCloseDate();
                 	
@@ -169,6 +193,7 @@ public class HdbManager extends User {
                         system.saveProjectsToFile("ProjectList.csv"); 
                 	}
                 	break;
+                	
                 default:
                     System.out.println("Invalid option. Please try again.");
             }
@@ -324,7 +349,7 @@ public class HdbManager extends User {
                     System.out.println("Logging out...");
                     return;  
                 default:
-                    System.out.println("Invalid choice. Please enter a number from 1 to 6.");
+                    System.out.println("Invalid choice. Please enter a number from 1 to 7.");
             }
         }
     }

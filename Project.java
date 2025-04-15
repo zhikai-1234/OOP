@@ -18,12 +18,12 @@ public class Project {
     private int officerSlots;
     private List<String> officers;
     
-    private boolean visibility;
+    private boolean visibility = true; //Leave it true by default
 
     private List<Applicant> applicantsForType1;
     private List<Applicant> applicantsForType2;
     
-    public Project(String ProjName, String neighborhood, String flatType1, int numOfUnitsType1, double priceType1, String flatType2, int numOfUnitsType2, double priceType2, String openDate, String closeDate, String managerName, int officerSlots, List<String> officers) {
+    public Project(String ProjName, String neighborhood, String flatType1, int numOfUnitsType1, double priceType1, String flatType2, int numOfUnitsType2, double priceType2, String openDate, String closeDate, String managerName, int officerSlots, List<String> officers, boolean visibility) {
     
     	this.ProjName = ProjName;
         this.neighborhood = neighborhood;
@@ -40,11 +40,14 @@ public class Project {
         this.officers = officers;
         this.applicantsForType1 = new ArrayList<>();
         this.applicantsForType2 = new ArrayList<>();
+        this.visibility = visibility;
     }
 
-    public void toggleVisibility(){
-
+    public void setVisibility(boolean visibility){
+    	this.visibility = visibility;
+        System.out.println("Visibility is now set to: " + (visibility ? "ON" : "OFF"));
     }
+    
     public boolean getVisibility(){
         return this.visibility;
     }
@@ -199,6 +202,7 @@ public class Project {
         System.out.println("Manager in charged: " + managerName);
         System.out.println("Officer Slots: " + officerSlots);
         System.out.println("Officers Assigned: " + String.join(", ", officers));
+        System.out.println("Visibility: " + (visibility ? "ON" : "OFF"));
         System.out.println("---------------------------------------");
     }
 
