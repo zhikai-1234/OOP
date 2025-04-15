@@ -13,10 +13,12 @@ public class BTOSystem {
 	
      private List<User> userList;
      private List<Project> projectList;
+     private List<Enquiry> enquiryList; // //
      
      public BTOSystem() { 
          userList = new ArrayList<>();
          projectList = new ArrayList<>();
+	 enquiryList = new ArrayList<>();// //
      }
      
      /* This loadUserDataFromFIle is to read the csv file of the roles, so when login in, 
@@ -197,8 +199,120 @@ public class BTOSystem {
         System.out.println("Invalid NRIC or password.");
         return null;
     }
-    
 
+// methods needed for HDBOfficer //
+
+	
+    public Applicant getApplicant(String nric) {
+        for (User user : userList) {
+            if (user instanceof Applicant && user.getUserID().equalsIgnoreCase(nric)) {
+                return (Applicant) user;
+            }
+        }
+        return null;
+    }
+
+  
+	
+
+    public boolean hasAppliedAsApplicant(String userID, String projectName) {
+        for (User user : userList) {
+            if (user instanceof Applicant && user.getUserID().equalsIgnoreCase(userID)) {
+                Applicant applicant = (Applicant) user;
+                return applicant.getAssignedProject() != null &&
+                       applicant.getAssignedProject().equalsIgnoreCase(projectName);
+            }
+        }
+        return false;
+    }
+
+
+	
+    public boolean isOfficerForOtherProject(String userID) {
+        for (Project project : projectList) {
+            if (project.getOfficers().contains(userID)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+    public void submitOfficerApplication(HdbOfficer officer, String projectName) {
+        for (Project project : projectList) {
+            if (project.getProjName().equalsIgnoreCase(projectName)) {
+                project.getOfficers().add(officer.getUserID());
+                saveProjectsToFile("ProjectList.csv");
+            }
+        }
+    }
+
+    public String getProjectDetails(String projectName) {
+        for (Project project : projectList) {
+            if (project.getProjName().equalsIgnoreCase(projectName)) {
+                return project.toString(); // Assumes toString() is properly implemented
+            }
+        }
+        return "Project not found.";
+    }
+
+
+    public String getEnquiry(String applicantID, String projectName) {
+        // Placeholder - Implement based on your actual Enquiry data structure
+        return "Enquiry from " + applicantID + " for project " + projectName;
+    }
+
+	
+
+    public void updateFlatCount(String projectName, String flatType, int quantity) {
+        for (Project project : projectList) {
+            if (project.getProjName().equalsIgnoreCase(projectName)) {
+                if (flatType.equalsIgnoreCase(project.getFlatType1())) {
+                    project.setNumOfUnitsType1(project.getNumOfUnitsType1() - quantity);
+                } else if (flatType.equalsIgnoreCase(project.getFlatType2())) {
+                    project.setNumOfUnitsType2(project.getNumOfUnitsType2() - quantity);
+                }
+                saveProjectsToFile("ProjectList.csv");
+            }
+        }
+    }
+
+	
+
+    public boolean isApplicantSuccessful(String applicantID, String projectName) {
+        // For now, assume any applicant with a matching assignedProject is successful
+        for (User user : userList) {
+            if (user instanceof Applicant) {
+                Applicant a = (Applicant) user;
+                if (a.getUserID().equalsIgnoreCase(applicantID) &&
+                    projectName.equalsIgnoreCase(a.getAssignedProject())) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+
+	
+    public void updateApplicantProjectStatus(String applicantID, String status) {
+        Applicant applicant = getApplicant(applicantID);
+        if (applicant != null) {
+            applicant.setProjectStatus(status);
+        }
+    }
+
+
+	
+    public void updateApplicantFlatType(String applicantID, String flatType) {
+        Applicant applicant = getApplicant(applicantID);
+        if (applicant != null) {
+            applicant.setFlatType(flatType);
+        }
+    }
+
+
+	
     public void loadUserDate(){
 
     }
@@ -214,6 +328,48 @@ public class BTOSystem {
     public List<Project> getProjectList() {
     	return projectList;
     }
+
+    public List<User> getUserList() {
+        return userList;
+    }
+
+// ADDED STUFF//
+    public void addEnquiry(Enquiry enquiry) {
+        enquiryList.add(enquiry);
+    }
+
+    public String getEnquiry(String applicantID, String projectName) {
+        int userID = getUserIDAsInt(applicantID);
+        int projectID = getProjectID(projectName);
+
+        for (Enquiry e : enquiryList) {
+            if (e.userID == userID && e.projectID == projectID) {
+                return "Enquiry:\n" + e.enquireText + "\nResponse:\n" + e.enquiryResponse;
+            }
+        }
+
+        return "No enquiry found for " + applicantID + " on project " + projectName;
+    }
+
+    private int getUserIDAsInt(String userID) {
+        try {
+            return Integer.parseInt(userID.replaceAll("[^0-9]", ""));
+        } catch (NumberFormatException e) {
+            return -1;
+        }
+    }
+
+    private int getProjectID(String projectName) {
+        for (int i = 0; i < projectList.size(); i++) {
+            if (projectList.get(i).getProjName().equalsIgnoreCase(projectName)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+// //
+
     
     public static void main(String[] args) {
         BTOSystem system = new BTOSystem();
