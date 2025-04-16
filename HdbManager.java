@@ -51,7 +51,7 @@ public class HdbManager extends User {
             return;
         }
         
-        String managerName = this.getName();
+        String managerName = this.getName(); //Auto assigned the manager that is creating the project as this manager
         
         System.out.print("Enter number of Officer slots: ");
         int slots = scanner.nextInt();
@@ -67,10 +67,11 @@ public class HdbManager extends User {
         }
 
         
-        List<String> officers = new ArrayList<>(); //putting it empty list first because
-                                                   //need to approve or reject officers later
+        List<String> pendingOfficers = new ArrayList<>();
+        List<String> approvedOfficers = new ArrayList<>(); //putting it empty list first because
+                                                           //need to approve or reject officers later
         
-        Project newProject = new Project(projName, neighborhood, type1, units1, price1, type2, units2, price2, openingDate, closingDate, managerName, slots, officers, visibility);
+        Project newProject = new Project(projName, neighborhood, type1, units1, price1, type2, units2, price2, openingDate, closingDate, managerName, slots, pendingOfficers, approvedOfficers, visibility);
         
         system.getProjectList().add(newProject);
         system.saveProjectsToFile("ProjectList.csv");
@@ -304,8 +305,51 @@ public class HdbManager extends User {
         }
     }
 
-    public void approveOfficerRegistration(){
+    public void approveOfficerRegistration(BTOSystem system) {
+        List<Project> myProjects = filteredProj(system);
+        Scanner scanner = new Scanner(System.in);
 
+        if (myProjects.isEmpty()) return;
+
+        System.out.println("Select a project to review officer applications:");
+        for (int i = 0; i < myProjects.size(); i++) {
+            System.out.println((i + 1) + ") " + myProjects.get(i).getProjName());
+        }
+
+        int projChoice = scanner.nextInt();
+        scanner.nextLine();
+
+        if (projChoice < 1 || projChoice > myProjects.size()) {
+            System.out.println("Invalid choice.");
+            return;
+        }
+
+        Project selectedProject = myProjects.get(projChoice - 1);
+        List<String> pending = selectedProject.getPendingOfficers();
+
+        if (pending.isEmpty()) {
+            System.out.println("No pending officers for this project.");
+            return;
+        }
+
+        System.out.println("Pending Officers:");
+        for (int i = 0; i < pending.size(); i++) {
+            System.out.println((i + 1) + ") " + pending.get(i));
+        }
+
+        System.out.print("Enter number of officer to approve (or 0 to cancel): ");
+        int officerChoice = scanner.nextInt();
+        scanner.nextLine();
+
+        if (officerChoice < 1 || officerChoice > pending.size()) {
+            System.out.println("Invalid selection.");
+            return;
+        }
+
+        String officerName = pending.get(officerChoice - 1);
+        selectedProject.approveOfficer(officerName);
+        system.saveProjectsToFile("ProjectList.csv");
+        System.out.println("Officer " + officerName + " has been approved.");
     }
 
     public void approveApplicantApplication(){
@@ -323,7 +367,8 @@ public class HdbManager extends User {
             System.out.println("3. Delete Projects");
             System.out.println("4. View all Projects");
             System.out.println("5. View your own Projects");
-            System.out.println("6. Logout");
+            System.out.println("6. Approve Officer Registrations");
+            System.out.println("7. Logout");
 
             System.out.print("Enter your choice: ");
             choice = scanner.nextInt();
@@ -346,6 +391,9 @@ public class HdbManager extends User {
                     filteredProj(system);
                     break;
                 case 6:
+                    approveOfficerRegistration(system);
+                    break;
+                case 7:
                     System.out.println("Logging out...");
                     return;  
                 default:

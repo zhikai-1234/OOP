@@ -16,14 +16,16 @@ public class Project {
     private String openDate, closeDate; //save in the CSV file as (yyyy-mm-dd)
     private String managerName;
     private int officerSlots;
-    private List<String> officers;
+    //private List<String> officers; REMOVE LATER
+    private List<String> approvedOfficers;
+    private List<String> pendingOfficers;
     
     private boolean visibility = true; //Leave it true by default
 
     private List<Applicant> applicantsForType1;
     private List<Applicant> applicantsForType2;
     
-    public Project(String ProjName, String neighborhood, String flatType1, int numOfUnitsType1, double priceType1, String flatType2, int numOfUnitsType2, double priceType2, String openDate, String closeDate, String managerName, int officerSlots, List<String> officers, boolean visibility) {
+    public Project(String ProjName, String neighborhood, String flatType1, int numOfUnitsType1, double priceType1, String flatType2, int numOfUnitsType2, double priceType2, String openDate, String closeDate, String managerName, int officerSlots, List<String> pendingOfficers, List<String> approvedOfficers, boolean visibility) {
     
     	this.ProjName = ProjName;
         this.neighborhood = neighborhood;
@@ -37,15 +39,37 @@ public class Project {
         this.closeDate = closeDate;
         this.managerName = managerName;
         this.officerSlots = officerSlots;
-        this.officers = officers;
+        //this.officers = officers;
         this.applicantsForType1 = new ArrayList<>();
         this.applicantsForType2 = new ArrayList<>();
         this.visibility = visibility;
+        this.pendingOfficers = new ArrayList<>(pendingOfficers);
+        this.approvedOfficers = new ArrayList<>(approvedOfficers);
     }
 
     public void setVisibility(boolean visibility){
     	this.visibility = visibility;
         System.out.println("Visibility is now set to: " + (visibility ? "ON" : "OFF"));
+    }
+    
+    public List<String> getApprovedOfficers() {
+        return approvedOfficers;
+    }
+
+    public List<String> getPendingOfficers() {
+        return pendingOfficers;
+    }
+
+    public void addPendingOfficer(String officerID) {
+        if (!pendingOfficers.contains(officerID)) {
+            pendingOfficers.add(officerID);
+        }
+    }
+
+    public void approveOfficer(String officerID) {
+        if (pendingOfficers.remove(officerID)) {
+            approvedOfficers.add(officerID);
+        }
     }
     
     public boolean getVisibility(){
@@ -156,13 +180,13 @@ public class Project {
         this.officerSlots = officerSlots;
     }
 
-    public List<String> getOfficers() {
+    /*public List<String> getOfficers() {
         return officers;
     }
 
     public void setOfficers(List<String> officers) {
         this.officers = officers;
-    }
+    }*/
 
     public void addApplicant(Applicant applicant, int flatType) {
         if (flatType == 1) {
@@ -201,7 +225,9 @@ public class Project {
         System.out.println("Application Period: " + openDate + " to " + closeDate);
         System.out.println("Manager in charged: " + managerName);
         System.out.println("Officer Slots: " + officerSlots);
-        System.out.println("Officers Assigned: " + String.join(", ", officers));
+        System.out.println("Approved Officers: " + String.join(", ", approvedOfficers));
+        System.out.println("Pending Officers: " + String.join(", ", pendingOfficers));
+
         System.out.println("Visibility: " + (visibility ? "ON" : "OFF"));
         System.out.println("---------------------------------------");
     }

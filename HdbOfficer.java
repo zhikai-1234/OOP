@@ -17,12 +17,12 @@ public class HdbOfficer extends Applicant {
         System.out.print("Enter project name to register for as officer: ");
         String projectName = scanner.nextLine();
 
-        if (system.hasAppliedAsApplicant(this.getUserID(), projectName)) {
+        /*if (system.hasAppliedAsApplicant(this.getName(), projectName)) { //I change to name
             System.out.println("Error: You cannot register as an HDB Officer for a project you applied to as an Applicant.");
             return;
-        }
+        }*/
 
-        if (system.isOfficerForOtherProject(this.getUserID())) {
+        if (system.isOfficerForOtherProject(this.getName())) { //I change to name
             System.out.println("Error: You are already registered as an officer for another project.");
             return;
         }
