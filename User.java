@@ -1,17 +1,15 @@
  public abstract class User { //Make it abstract, so that no one can create a User object,
 	                         //so that everyone is either a Applicant, Manager or Officer
 	 
-    private String name, UserID, password, age, maritalStatus;
-    private String assignedProject;
-    private String flatType;
+    private String name, UserID, password, maritalStatus;
+    private int age;
     
-    public User(String name, String UserID, String age, String maritalStatus, String password) {
-        
+    public User(String name, String UserID, int age, String maritalStatus) {
     	this.name = name;
     	this.UserID = UserID;
         this.age = age;
         this.maritalStatus = maritalStatus;
-        this.password = password;
+        this.password = "password";
     }
     
     public String getName() {
@@ -26,7 +24,7 @@
         return password;
     }
 
-    public String getAge() {
+    public int getAge() {
         return age;
     }
     
@@ -38,19 +36,4 @@
 	    this.password = newPassword;
     }
 
-    public void viewProj(){
-	    System.out.println("Viewing projects...");
-    }
-	 
-    public void setAssignedProject(String assignedProject) {
-    this.assignedProject = assignedProject;
-    }
-
-    public void setFlatType(String flatType) {
-    this.flatType = flatType;
-    }
-
-	 
-    public abstract void displayJobscope(BTOSystem system);
-    
 }

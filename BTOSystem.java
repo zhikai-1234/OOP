@@ -1,14 +1,11 @@
-import java.util.List;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.io.BufferedWriter;
-import java.io.FileWriter;
+import java.util.List;
 import java.util.Scanner;
-import java.util.*;
-import java.io.*;
 
 public class BTOSystem { 
 	
@@ -350,32 +347,7 @@ public class BTOSystem {
         return null;
     }
 
-// methods needed for HDBOfficer //
-
-	
-    public Applicant getApplicant(String nric) {
-        for (User user : userList) {
-            if (user instanceof Applicant && user.getUserID().equalsIgnoreCase(nric)) {
-                return (Applicant) user;
-            }
-        }
-        return null;
-    }
-
-  
-    public boolean hasAppliedAsApplicant(String userID, String projectName) {
-        for (User user : userList) {
-            if (user instanceof Applicant && user.getUserID().equalsIgnoreCase(userID)) {
-                Applicant applicant = (Applicant) user;
-                return applicant.getAssignedProject() != null &&
-                       applicant.getAssignedProject().equalsIgnoreCase(projectName);
-            }
-        }
-        return false;
-    }
-
-
-	
+// methods needed for HDBOfficer //	
     public boolean isOfficerForOtherProject(String name) {
         for (Project project : projectList) {
             if (project.getPendingOfficers().contains(name) || project.getApprovedOfficers().contains(name)) { //check the pending and approved officer
@@ -390,165 +362,8 @@ public class BTOSystem {
         for (Project project : projectList) {
             if (project.getProjName().equalsIgnoreCase(projectName)) {
                 project.getPendingOfficers().add(officer.getName()); //I changed to getName
-                saveProjectsToFile("ProjectList.csv");
+                saveProjectsToFile("ProjectList.csv", projectList);
             }
         }
-    }
-
-
-    public String getProjectDetails(String projectName) {
-        for (Project project : projectList) {
-            if (project.getProjName().equalsIgnoreCase(projectName)) {
-                return project.toString(); // Assumes toString() is properly implemented
-            }
-        }
-        return "Project not found.";
-    }
-
-
-    public String getEnquiry(String applicantID, String projectName) {
-        // Placeholder - Implement based on your actual Enquiry data structure
-        return "Enquiry from " + applicantID + " for project " + projectName;
-    }
-
-	
-
-    public void updateFlatCount(String projectName, String flatType, int quantity) {
-        for (Project project : projectList) {
-            if (project.getProjName().equalsIgnoreCase(projectName)) {
-                if (flatType.equalsIgnoreCase(project.getFlatType1())) {
-                    project.setNumOfUnitsType1(project.getNumOfUnitsType1() - quantity);
-                } else if (flatType.equalsIgnoreCase(project.getFlatType2())) {
-                    project.setNumOfUnitsType2(project.getNumOfUnitsType2() - quantity);
-                }
-                saveProjectsToFile("ProjectList.csv");
-            }
-        }
-    }
-
-	
-
-    public boolean isApplicantSuccessful(String applicantID, String projectName) {
-        // For now, assume any applicant with a matching assignedProject is successful
-        for (User user : userList) {
-            if (user instanceof Applicant) {
-                Applicant a = (Applicant) user;
-                if (a.getUserID().equalsIgnoreCase(applicantID) &&
-                    projectName.equalsIgnoreCase(a.getAssignedProject())) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-
-	
-    public void updateApplicantProjectStatus(String applicantID, String status) {
-        Applicant applicant = getApplicant(applicantID);
-        if (applicant != null) {
-            applicant.setProjectStatus(status);
-        }
-    }
-
-
-	
-    public void updateApplicantFlatType(String applicantID, String flatType) {
-        Applicant applicant = getApplicant(applicantID);
-        if (applicant != null) {
-            applicant.setFlatType(flatType);
-        }
-    }
-
-
-	
-    public void loadUserDate(){
-
-    }
-
-    public void createNewUser(){
-
-    }
-
-    public void loadProj(){
-
-    }
-    
-    public List<Project> getProjectList() {
-    	return projectList;
-    }
-
-    public List<User> getUserList() {
-        return userList;
-    }
-
-// ADDED STUFF//
-    public void addEnquiry(Enquiry enquiry) {
-        enquiryList.add(enquiry);
-    }
-
-    public String getEnquiry(String applicantID, String projectName) {
-        int userID = getUserIDAsInt(applicantID);
-        int projectID = getProjectID(projectName);
-
-        for (Enquiry e : enquiryList) {
-            if (e.userID == userID && e.projectID == projectID) {
-                return "Enquiry:\n" + e.enquireText + "\nResponse:\n" + e.enquiryResponse;
-            }
-        }
-
-        return "No enquiry found for " + applicantID + " on project " + projectName;
-    }
-
-    private int getUserIDAsInt(String userID) {
-        try {
-            return Integer.parseInt(userID.replaceAll("[^0-9]", ""));
-        } catch (NumberFormatException e) {
-            return -1;
-        }
-    }
-
-    private int getProjectID(String projectName) {
-        for (int i = 0; i < projectList.size(); i++) {
-            if (projectList.get(i).getProjName().equalsIgnoreCase(projectName)) {
-                return i;
-            }
-        }
-        return -1;
-    }
-
-
-    
-    public static void main(String[] args) {
-        BTOSystem system = new BTOSystem();
-        
-        /* The 3 lines of code below is to load all users from their respective CSV files:
-        ManagerList.csv → creates HdbManager objects
-        ApplicantList.csv → creates Applicant objects
-        OfficerList.csv → creates HdbOfficer objects
-        These users are stored in userList for login verification later. */
-        system.loadUsersFromFile("ManagerList.csv", "manager"); 
-        system.loadUsersFromFile("ApplicantList.csv", "applicant");
-        system.loadUsersFromFile("OfficerList.csv", "officer");
-        
-        system.loadProjectsFromFile("ProjectList.csv"); //Read the Project Data csv file
-        
-        User user = system.login();
-        if (user != null) {
-        	/* The line below is a method call to call the displayjobscope
-        	 * method of your individual roles jobscopes. Also
-        	 * We have to pass in the system object so that in 
-        	 * your respective role classes you will be able to 
-        	 * use the BTOSystem variables like accessing the
-        	 * projectList or userList.*/
-            user.displayJobscope(system); //During runtime, user will be
-                                          //treated as your roles object
-                                          //calling its own overwritten
-                                          //displayJobscope method(polymorphism)
-                                                               
-        }
-   
     }
 }
-
-

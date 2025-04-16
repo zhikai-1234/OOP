@@ -1,20 +1,16 @@
-import java.util.Scanner;
-
 import java.util.List;
-import java.util.ArrayList;
+import java.util.Scanner;
 
 public class ApplicantPortal {
 	
 	private Applicant applicant;
 	private List<Project> projects;
-	private List<ProjectApplication> allProjectApplications;
 	
 	Scanner sc = new Scanner(System.in);
 	
 	public ApplicantPortal(Applicant a, List<Project> projs) {
 		this.applicant = a;
 		this.projects = projs;
-		this.allProjectApplications = new ArrayList<ProjectApplication>();
 	}
 	
 	
@@ -42,17 +38,17 @@ public class ApplicantPortal {
 			
 			case 1 -> viewProjects();
 			
-			case 2 -> applyForProject();
+			case 2 -> ApplicationHandler.applyForProject(applicant);
 				
-			case 3 -> viewAppliedProject();
+			case 3 -> ApplicationHandler.viewAppliedProject(applicant);
 			
-			case 4 -> bookFlat();
+			case 4 -> ApplicationHandler.bookFlat(applicant);
 				
-			case 5 -> requestWithdrawal();
+			case 5 -> ApplicationHandler.requestWithdrawal(applicant);
 				
-			case 6 -> submitEnquiry();
+			case 6 -> applicant.submitEnquiry();
 				
-			case 7 -> displayAllEnquiries();
+			case 7 -> applicant.displayAllEnquiries();
 				
 			case 8 -> exit = true;
 			
@@ -68,108 +64,4 @@ public class ApplicantPortal {
 			}
 		}
 	}
-	
-	private int checkEligibility(Applicant a){
-        int age = Integer.parseInt(a.getAge());
-        if(a.getMaritalStatus().equals("Single") && age >= 35){
-            return 1;
-        }
-        else if(a.getMaritalStatus().equals("Married") && age >= 21){
-            return 2;
-        }
-        return 0;
-    }
-
-	public void applyForProject() {
-		/* Eligibility 0: Not eligible at all
-		 * Eligibility 1: 2-Room only
-		 * Eligibility 2: Both 2 and 3-Room
-		 */
-		int applicantEligibility = checkEligibility(applicant);
-		
-		switch (applicantEligibility) {
-		
-			case 0 -> System.out.println("You are not eligible to apply for any project.");
-			
-			case 1 -> {
-				System.out.println("Which project type would you like to apply for?");
-				System.out.println();
-				int i = 1;
-				for (Project p : projects) {
-					System.out.printf("(%d) %s | Units left: %d\n", i, p.getProjName(), p.getNumOfUnitsType1());
-					i++;
-				}
-				System.out.print("Enter your choice: ");
-				int projChoice = sc.nextInt();
-				sc.nextLine();
-				if (projects.get(projChoice - 1).getNumOfUnitsType1() == 0) {
-					System.out.println("Invalid choice: No more units left");
-				}
-				else {
-					System.out.println("Successful! Creating your application now...");
-				}
-			}
-			
-			case 2 -> {
-				System.out.println("Would you like to apply for a 2-Room or 3-Room flat?");
-				System.out.println("(1) 2-Room");
-				System.out.println("(2) 3-Room");
-				int nRooms = sc.nextInt();
-				sc.nextLine();
-				
-				if (nRooms == 1) {
-					System.out.println("Which 2-room project type would you like to apply for?");
-					System.out.println();
-					int i = 1;
-					for (Project p : projects) {
-						System.out.printf("(%d) %s | Units left: %d\n", i, p.getProjName(), p.getNumOfUnitsType1());
-						i++;
-					}
-				}
-				
-				else if (nRooms == 2) {
-					System.out.println("Which 3-room project type would you like to apply for?");
-					System.out.println();
-					int i = 1;
-					for (Project p : projects) {
-						System.out.printf("(%d) %s | Units left: %d\n", i, p.getProjName(), p.getNumOfUnitsType2());
-						i++;
-					}
-				}
-				
-				else {
-					System.out.println("Invalid choice");
-				}
-			}
-			
-			default -> System.out.println("Invalid eligibility");
-		
-		}
-	}
-
-	public void viewAppliedProject() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void bookFlat() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void requestWithdrawal() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void submitEnquiry() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void displayAllEnquiries() {
-		// TODO Auto-generated method stub
-		
-	}
-
 }

@@ -2,12 +2,12 @@ import java.util.Scanner;
 import java.util.ArrayList;
 import java.util.List;
 
-public class HdbManager extends User {
+public class Manager extends User {
     private String[] managedProj;
     private String[] approvedOfficer;
 
-    public HdbManager(String name, String UserID, String age, String maritalStatus, String password) {
-        super(name, UserID, age, maritalStatus, password);
+    public Manager(String name, String userID, int age, String maritalStatus) {
+        super(name, userID, age, maritalStatus);
     }
     
     public void createProj(BTOSystem system){
