@@ -5,12 +5,13 @@ public class ApplicantPortal {
 	
 	private Applicant applicant;
 	private List<Project> projects;
-	
+	private ApplicationHandler appHandler;
 	Scanner sc = new Scanner(System.in);
 	
-	public ApplicantPortal(Applicant a, List<Project> projs) {
+	public ApplicantPortal(Applicant a, List<Project> projs, ApplicationHandler appHandler) {
 		this.applicant = a;
 		this.projects = projs;
+		this.appHandler = appHandler;
 	}
 	
 	
@@ -46,7 +47,7 @@ public class ApplicantPortal {
 				
 			case 5 -> ApplicationHandler.requestWithdrawal(applicant);
 				
-			case 6 -> applicant.submitEnquiry();
+			case 6 -> EnquiryHandler.submitEnquiry();
 				
 			case 7 -> applicant.displayAllEnquiries();
 				
@@ -57,11 +58,30 @@ public class ApplicantPortal {
 		} while (!exit);	
 	}
 
-	public void viewProjects() {
+	public void viewProjects(Applicant a) {
+		if (a.getEligibilityStatus() == 0) {
+			System.out.println("ERROR: Applicant not eligible for any projects.");
+			return;
+		}
+	
+		Project appliedProject = a.getProjApplied();
+		if (appliedProject == null) {
+			appliedProject = appHandler.getProjectsPendingApproval().get(a);
+		}
+	
+		// Display applied project (even if hidden)
+		if (appliedProject != null) {
+			System.out.println("\n=== APPLIED PROJECT ===");
+			appliedProject.displayProjectDetails();
+		}
+	
+		System.out.println("\n=== AVAILABLE PROJECTS ===");
 		for (Project p : projects) {
-			if (p.getVisibility()) {
+			boolean isApplied = p.equals(appliedProject);
+			if (p.getVisibility() && !isApplied) {
 				p.displayProjectDetails();
 			}
 		}
 	}
+	
 }
