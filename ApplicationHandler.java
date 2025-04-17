@@ -1,17 +1,22 @@
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 public class ApplicationHandler {
 
     private List<Applicant> applicants;
     private List<LiveProject> liveProjects;
+    private List<TemplateProject> templateProjects;
+
+    ProjectManager pm = new ProjectManager();
 
     public ApplicationHandler() {
         this.applicants = new ArrayList<>();
         this.liveProjects = new ArrayList<>();
+        this.templateProjects = pm.getTemplateProjects();
     }
+}
 
-    public void applyForProject(Project project, String flatType){
+/*   public void applyForProject(Project project, String flatType){
     if(projApplied != null){
         System.out.println("You have already applied for an project.");
         return;
@@ -77,4 +82,4 @@ public class ApplicationHandler {
     public void bookFlat(){
 
     }
-}
+} */

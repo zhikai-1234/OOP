@@ -1,7 +1,7 @@
 import java.util.Scanner;
 
 public class Applicant extends User{
-    private Project projApplied;
+    private LiveProject projApplied;
     public String applicationStatus;
     private int eligibilityStatus;
     private int appliedFlatType;

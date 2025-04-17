@@ -53,5 +53,15 @@ public class ProjectManager {
             }
     }
 
+    // GETTERS //
 
+    public List<TemplateProject> getTemplateProjects() {
+        if (this.templateProjects.isEmpty()) {
+            loadTemplateProjects("ProjectList.csv");
+            return this.templateProjects;
+        }
+        return this.templateProjects;
+    }
+
+    // 
 }

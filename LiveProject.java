@@ -22,6 +22,8 @@ public class LiveProject extends TemplateProject {
     private int nType1;
     private int nType2;
 
+    // USER ATTRIBUTES //
+    private Applicant applicant;
 
     public LiveProject(String name, String neighbourhood, String type1, int nType1, double type1price, String type2, 
     int nType2, double type2price, String openDate, String closeDate, int noOfOfficers, boolean visibility, Manager manager) {
@@ -30,5 +32,10 @@ public class LiveProject extends TemplateProject {
         this.manager = manager;
         this.pendingOfficers = new ArrayList<>();
         this.approvedOfficers = new ArrayList<>();
+        this.applicant = null;
+    }
+
+    public void toggleVisibility() {
+        this.visibility = !this.visibility;
     }
 }

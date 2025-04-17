@@ -47,7 +47,7 @@ public class UserRepository {
             }
     }
 
-    public User login(User user) {
+    public User login(List<User> users) {
     
         Scanner scanner = new Scanner(System.in);
         
@@ -70,5 +70,69 @@ public class UserRepository {
                                 //it will return a manager object. And
                                 //you are able to display its jobscope.
                                 //if the user is wrong, will return null.
+    }
+
+    // GETTERS //
+    public List<Applicant> getAllApplicants() {
+        List <Applicant> allApplicants = new ArrayList<>();
+        for (User u : users) {
+            if (u instanceof Applicant applicant) {
+                allApplicants.add(applicant);
+            }
+        }
+        return allApplicants;
+    }
+
+    public List<Officer> getAllOfficers() {
+        List <Officer> allOfficers = new ArrayList<>();
+        for (User u : users) {
+            if (u instanceof Officer officer) {
+                allOfficers.add(officer);
+            }
+        }
+        return allOfficers;
+    }
+
+    public List<Manager> getAllManagers() {
+        List <Manager> allManagers = new ArrayList<>();
+        for (User u : users) {
+            if (u instanceof Manager manager) {
+                allManagers.add(manager);
+            }
+        }
+        return allManagers;
+    }
+
+    public Applicant getApplicantByUserID(String userID) {
+        List<Applicant> allApplicants = getAllApplicants();
+        for (Applicant a : allApplicants) {
+            if (a.getUserID().equals(userID)) {
+                return a;
+            }
+        }
+        System.out.println("Applicant not found");
+        return null;
+    }
+
+    public Officer getOfficerByUserID(String userID) {
+        List<Officer> allOfficers = getAllOfficers();
+        for (Officer o : allOfficers) {
+            if (o.getUserID().equals(userID)) {
+                return o;
+            }
+        }
+        System.out.println("Officer not found");
+        return null;
+    }
+
+    public Manager getManagerByUserID(String userID) {
+        List<Manager> allManagers = getAllManagers();
+        for (Manager m : allManagers) {
+            if (m.getUserID().equals(userID)) {
+                return m;
+            }
+        }
+        System.out.println("Manager not found");
+        return null;
     }
 }
