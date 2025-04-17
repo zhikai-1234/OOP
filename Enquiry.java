@@ -8,10 +8,11 @@ public class Enquiry {
 
     Scanner sc = new Scanner(System.in);
 
-    public Enquiry(String uID, int pID) {
+    public Enquiry(String uID, String Project) {
         this.enquireText = "No enquiry";
         this.enquiryResponse = "No response";
         this.userID = uID;
+        this.project = Project;
     }
 
     // GETTERS //
@@ -25,6 +26,9 @@ public class Enquiry {
 
     public String getUserID() {
         return this.userID;
+        
+    }public String getProject() {
+        return this.project;
     }
 }
 

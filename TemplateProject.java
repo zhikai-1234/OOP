@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 public class TemplateProject {
 
     private String name;
@@ -13,6 +15,7 @@ public class TemplateProject {
     private String managerName;
     private int nOfficers;
     private boolean visibility;
+    private List<Enquiry> enquiries;
 
     public TemplateProject(String name, String neighbourhood, String type1, int nType1, double type1price, String type2, int nType2,
      double type2price, String openDate, String closeDate, String managerName, int nOfficers, boolean visibility) {
@@ -27,6 +30,7 @@ public class TemplateProject {
         this.managerName = managerName;
         this.nOfficers = nOfficers;
         this.visibility = visibility;
+        this.enquiries = new ArrayList<>();
     }
 
     // GETTERS //
@@ -81,5 +85,9 @@ public class TemplateProject {
 
     public boolean getVisibility() {
         return this.visibility;
+    }
+
+    public List<Enquiry> getEnquiries() {
+        return this.enquiries;
     }
 }
