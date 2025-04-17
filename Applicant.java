@@ -2,6 +2,7 @@ import java.util.Scanner;
 
 public class Applicant extends User{
     private LiveProject projApplied;
+    private int appliedType;
     public String applicationStatus;
     private int eligibilityStatus;
     private int appliedFlatType;
@@ -11,6 +12,7 @@ public class Applicant extends User{
     public Applicant(String name, String userID, int age, String maritalStatus) {
         super(name, userID, age, maritalStatus);
         this.projApplied = null;
+        this.appliedType = -1;
         this.applicationStatus = "No Project Applied";
         this.eligibilityStatus = checkEligibility();
         this.appliedFlatType = -1;
@@ -31,5 +33,23 @@ public class Applicant extends User{
             return 2;
         }
         return 0;
+    }
+
+    // GETTERS //
+    public String getApplicationStatus() {
+        return this.applicationStatus;
+    }
+
+    public int getAppliedType() {
+        return this.appliedType;
+    }
+
+    // SETTERS //
+    public void setApplicationStatus(String status) {
+        this.applicationStatus = status;
+    }
+
+    public void setAppliedType(int type) {
+        this.appliedType = type;
     }
 }

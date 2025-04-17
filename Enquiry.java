@@ -4,18 +4,31 @@ public class Enquiry {
     public String enquireText;
     public String enquiryResponse;
     public String editChoice;
-    public int userID, projectID;
+    public String userID;
 
     Scanner sc = new Scanner(System.in);
 
-    public Enquiry(int uID, int pID) {
+    public Enquiry(String uID, int pID) {
         this.enquireText = "No enquiry";
         this.enquiryResponse = "No response";
         this.userID = uID;
-        this.projectID = pID;
     }
 
-    public void submitEnquiry(){
+    // GETTERS //
+    public String getEnquiry() {
+        return this.enquireText;
+    }
+
+    public String getResponse() {
+        return this.enquiryResponse;
+    }
+
+    public String getUserID() {
+        return this.userID;
+    }
+}
+
+    /* public void submitEnquiry(){
         if (this.enquireText.equals("No enquiry")) {
             System.out.print("Type enquiry here: ");
             this.enquireText = sc.nextLine();
@@ -62,4 +75,4 @@ public class Enquiry {
         System.out.println("Response: " + this.enquiryResponse);
     }
         
-}
+} */

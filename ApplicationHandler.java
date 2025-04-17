@@ -1,20 +1,71 @@
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-
+import java.util.Map;
 public class ApplicationHandler {
 
     private List<Applicant> applicants;
-    private List<LiveProject> liveProjects;
     private List<TemplateProject> templateProjects;
+    private Map<Applicant, TemplateProject> projectsPendingApproval;
 
     ProjectManager pm = new ProjectManager();
+    UserRepository userRepo = new UserRepository();
 
     public ApplicationHandler() {
-        this.applicants = new ArrayList<>();
-        this.liveProjects = new ArrayList<>();
+        this.applicants = userRepo.getAllApplicants();
         this.templateProjects = pm.getTemplateProjects();
+        this.projectsPendingApproval = new HashMap<>();
+    }
+
+    public void applyForProject(Applicant a, TemplateProject p) {
+        switch(a.getEligibilityStatus()) {
+            case 0 -> {
+                System.out.println("ERROR: Applicant not eligible for any projects.");
+            }
+
+            case 1 -> {
+                if (a.getApplicationStatus().equals("No Project Applied") && 
+                a.getAppliedType() == 1) {
+                    this.projectsPendingApproval.put(a, p);
+                    a.setApplicationStatus("Pending Approval");
+                }
+                else {
+                    if (a.getAppliedType() == 2) {
+                        System.out.println("ERROR: Applicant not eligible for this type of flat.");
+                    }
+                    else {
+                        System.out.println("ERROR: Applicant already applied for a project.");
+                    }
+                }
+            }
+
+            case 2 -> {
+                if (a.getApplicationStatus().equals("No Project Applied") &&
+                (a.getAppliedType() == 1 || a.getAppliedType() == 2)) {
+                    this.projectsPendingApproval.put(a, p);
+                }
+                else {
+                    System.out.println("ERROR: Applicant already applied for a project.");
+                }
+            }
+        }
+    }
+
+    public String viewStatus(Applicant a) {
+        return a.getApplicationStatus();
+    }
+
+    public void withdrawApplicationBeforeApproval(Applicant a, TemplateProject p) {
+        if (projectsPendingApproval.containsKey(a) && !a.getApplicationStatus().equals("No Project Applied")) {
+            projectsPendingApproval.remove(a);
+            System.out.println("Application successfully withdrawn");
+        }
+        else {
+            System.out.println("ERROR: No project to withdraw from for this user");
+        }
     }
 }
+
+
 
 /*   public void applyForProject(Project project, String flatType){
     if(projApplied != null){

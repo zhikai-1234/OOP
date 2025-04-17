@@ -40,11 +40,12 @@ public class ProjectManager {
                  double price2 = Double.parseDouble(parts[7].trim());
                  String openDate = parts[8].trim();
                  String closeDate = parts[9].trim();
+                 String managerName = parts[10].trim();
                  int numOfficers = Integer.parseInt(parts[11].trim());
                  boolean visibility = Boolean.parseBoolean(parts[14].trim());
 
                  templateProjects.add(new TemplateProject(projName, neighborhood, flatType1, numType1, price1,
-                         flatType2, numType2, price2, openDate, closeDate, numOfficers, visibility));
+                         flatType2, numType2, price2, openDate, closeDate, managerName, numOfficers, visibility));
              }
              reader.close();
          } 
@@ -63,5 +64,25 @@ public class ProjectManager {
         return this.templateProjects;
     }
 
-    // 
+    // SETTERS //
+
+    // DISPLAY //
+    public void displayProjectDetails(TemplateProject p) {
+        if (p.getVisibility() == true) {
+            System.out.println("---------------------------------------");
+            System.out.printf("Project Name: %s\n", p.getName());
+            System.out.printf("Neighborhood: %s\n", p.getNeighbourhood());
+            System.out.println();
+            System.out.printf("Flat Type 1: %s\n", p.getType1());
+            System.out.printf("Units: %d\n", p.getNumOfType1());
+            System.out.printf("Price: $%.2f\n", p.getType1Price());
+            System.out.println();
+            System.out.printf("Flat Type 2: %s\n", p.getType2());
+            System.out.printf("Units: %d\n", p.getNumOfType2());
+            System.out.printf("Price: $%.2f\n", p.getType2Price());
+            System.out.println();
+            System.out.println("Application Period: " + p.getOpenDate() + " to " + p.getCloseDate());
+            System.out.printf("Manager in charge: %s\n" + p.getManagerName());
+        }
+    }
 }

@@ -10,11 +10,12 @@ public class TemplateProject {
     private double type2price;
     private String openDate;
     private String closeDate;
+    private String managerName;
     private int nOfficers;
     private boolean visibility;
 
     public TemplateProject(String name, String neighbourhood, String type1, int nType1, double type1price, String type2, int nType2,
-     double type2price, String openDate, String closeDate, int nOfficers, boolean visibility) {
+     double type2price, String openDate, String closeDate, String managerName, int nOfficers, boolean visibility) {
         this.name = name;
         this.neighbourhood = neighbourhood;
         this.type1 = type1;
@@ -23,6 +24,7 @@ public class TemplateProject {
         this.type2price = type2price;
         this.openDate = openDate;
         this.closeDate = closeDate;
+        this.managerName = managerName;
         this.nOfficers = nOfficers;
         this.visibility = visibility;
     }
@@ -67,6 +69,10 @@ public class TemplateProject {
 
     public String getCloseDate() {
         return this.closeDate;
+    }
+
+    public String getManagerName() {
+        return this.managerName;
     }
 
     public int getNumOfficers() {
