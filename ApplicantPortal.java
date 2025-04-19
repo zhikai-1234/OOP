@@ -4,14 +4,16 @@ import java.util.Scanner;
 public class ApplicantPortal {
 	
 	private Applicant applicant;
-	private List<Project> projects;
-	private ApplicationHandler appHandler;
+	private List<TemplateProject> templateProjects;
 	Scanner sc = new Scanner(System.in);
+
+	ProjectManager pm = new ProjectManager();
+	ApplicationHandler ah = new ApplicationHandler();
+	EnquiryHandler eh = new EnquiryHandler();
 	
-	public ApplicantPortal(Applicant a, List<Project> projs, ApplicationHandler appHandler) {
+	public ApplicantPortal(Applicant a) {
 		this.applicant = a;
-		this.projects = projs;
-		this.appHandler = appHandler;
+		this.templateProjects = pm.getTemplateProjects();
 	}
 	
 	
@@ -37,19 +39,30 @@ public class ApplicantPortal {
 		do {
 			switch (choice) {
 			
-			case 1 -> viewProjects();
+			case 1 -> viewProjects(applicant);
 			
-			case 2 -> ApplicationHandler.applyForProject(applicant);
+			case 2 -> {
+				int i = 1;
+				for (TemplateProject p : templateProjects) {
+					System.out.printf("Project %d\n", i);
+					pm.displayProjectDetails(p);
+					i++;
+				}
+				System.out.println("Choose from these projects");
+				int projChoice = sc.nextInt();
+				ah.applyForProject(applicant, templateProjects.get(i - 1));
+				System.out.println("Project successfully applied.");
+				}
 				
-			case 3 -> ApplicationHandler.viewAppliedProject(applicant);
+			case 3 -> ah.viewAppliedProject(applicant);
 			
-			case 4 -> ApplicationHandler.bookFlat(applicant);
+			case 4 -> ah.bookFlat(applicant);
 				
-			case 5 -> ApplicationHandler.requestWithdrawal(applicant);
+			case 5 -> ah.withdrawApplicationBeforeApproval(applicant);
 				
-			case 6 -> EnquiryHandler.submitEnquiry();
+			case 6 -> eh.submitEnquiry(applicant);
 				
-			case 7 -> applicant.displayAllEnquiries();
+			case 7 -> eh.displayAndManageUserEnquiries(applicant);
 				
 			case 8 -> exit = true;
 			
@@ -64,27 +77,27 @@ public class ApplicantPortal {
 			return;
 		}
 	
-		Project appliedProject = a.getProjApplied();
+		TemplateProject appliedProject = a.getProjApplied();
 	
 		// Display applied project (even if hidden)
 		if (appliedProject != null) {
 			System.out.println("\n=== APPLIED PROJECT ===");
-			appliedProject.displayProjectDetails();
+			pm.displayProjectDetails(appliedProject);
 		}
 	
 		System.out.println("\n=== AVAILABLE PROJECTS ===");
-		for (Project p : projects) {
+		for (TemplateProject p : templateProjects) {
 			boolean isApplied = p.equals(appliedProject);
 			boolean isEligible = false;
 
-			if(a.getEligibilityStatus() == 1 && p.getFlatType1().equals("2-Room")) {
+			if(a.getEligibilityStatus() == 1 && p.getType1().equals("2-Room")) {
 				isEligible = true;
-			} else if (a.getEligibilityStatus() == 2 && (p.getFlatType1().equals("2-Room") || p.getFlatType2().equals("3-Room"))) {
+			} else if (a.getEligibilityStatus() == 2 && (p.getType1().equals("2-Room") || p.getType2().equals("3-Room"))) {
 				isEligible = true;
 			}
 
 			if(p.getVisibility() && isEligible && !isApplied) {
-				p.displayProjectDetails();
+				pm.displayProjectDetails(appliedProject);
 			}	
     	}
 	}

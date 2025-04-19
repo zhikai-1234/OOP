@@ -66,6 +66,10 @@ public class ProjectManager {
 
     // SETTERS //
 
+    public void addLiveProject(LiveProject p) {
+        this.liveProjects.add(p);
+    }
+
     // DISPLAY //
     public void displayProjectDetails(TemplateProject p) {
         if (p.getVisibility() == true) {

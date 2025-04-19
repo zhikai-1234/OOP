@@ -1,6 +1,3 @@
-import java.util.Scanner;
-import java.util.ArrayList;
-import java.util.List;
 
 public class Manager extends User {
     private String[] managedProj;
@@ -9,8 +6,9 @@ public class Manager extends User {
     public Manager(String name, String userID, int age, String maritalStatus) {
         super(name, userID, age, maritalStatus);
     }
+} 
     
-    public void createProj(BTOSystem system){
+/*    public void createProj(BTOSystem system){
         
         Scanner scanner = new Scanner(System.in);
         
@@ -234,14 +232,14 @@ public class Manager extends User {
             /*Iterate the projectList to match 1 by 1 if the Manager has already been assigned to a project
             if manager is assigned already, check if that HDBproject is the one that is currently being edited, 
             if its not then start checking if the dates overlap.*/
-            if (existingProj.getManagerName().equalsIgnoreCase(this.getName()) && existingProj != editProject) {
+            /*if (existingProj.getManagerName().equalsIgnoreCase(this.getName()) && existingProj != editProject) {
             	
                 String existingOpen = existingProj.getOpenDate();
                 String existingClose = existingProj.getCloseDate();
                 
                 /*Comparing Strings of the Date to see if the existing project will overlap with the 
                  *newly created/edited Project application dates*/
-                if (existingOpen.compareTo(newClosingDate) <= 0 && existingClose.compareTo(newOpeningDate) >= 0) {
+                /*if (existingOpen.compareTo(newClosingDate) <= 0 && existingClose.compareTo(newOpeningDate) >= 0) {
                         return true;
                 }
     	    }
@@ -263,7 +261,7 @@ public class Manager extends User {
              * If it matches, the project is printed and added to the filtered list.
              * It also return the filtered list so that it can be used in the editProj() and deleteProj()
              * to ensure the Managers can only edit and delete the projects that their handling.*/
-            if (p.getManagerName().equalsIgnoreCase(this.getName())) {
+            /*if (p.getManagerName().equalsIgnoreCase(this.getName())) {
                 filtered.add(p);
             }
         }
@@ -403,4 +401,4 @@ public class Manager extends User {
     }
     
     
-}
+}*/

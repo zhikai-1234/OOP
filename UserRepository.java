@@ -25,7 +25,7 @@ public class UserRepository {
                      continue;
                  }
                  String[] parts = line.split(",", -1);
-                 if (parts.length < 15) continue;
+                 if (parts.length < 4) continue;
 
                  String name = parts[0].trim();
                  String nric = parts[1].trim();
@@ -43,34 +43,36 @@ public class UserRepository {
             } reader.close();
          } 
          catch (IOException e) {
-             System.out.println("Failed to read project list");
+             System.out.println("Failed to read user list");
+             e.printStackTrace();
             }
     }
 
-    public User login(List<User> users) {
-    
+    public <T extends User> T login(List<T> users) {
         Scanner scanner = new Scanner(System.in);
         
-        System.out.print("Enter UserID: ");
-        String userID = scanner.nextLine();
+        // Clear the buffer first
+        System.out.flush();
+        
+        System.out.print("Enter UserID: ");  // Using print() instead of println()
+        String userID = scanner.nextLine().trim();
         
         System.out.print("Enter Password: ");
-        String password = scanner.nextLine();
+        String password = scanner.nextLine().trim();
 
-        for (User u : users) {
+        for (T u : users) {
             if (u.getUserID().equalsIgnoreCase(userID) &&
                 u.getPassword().equals(password)) {
                 System.out.println("Login successful!");
                 return u;
             }
         }
+
         System.out.println("Invalid login!");
-        return null;            //return your roles object, so if ur UserID
-                                //and password matches a Manager object
-                                //it will return a manager object. And
-                                //you are able to display its jobscope.
-                                //if the user is wrong, will return null.
+        return null;
     }
+
+
 
     // GETTERS //
     public List<Applicant> getAllApplicants() {

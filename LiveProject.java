@@ -17,7 +17,6 @@ public class LiveProject extends TemplateProject {
     private boolean visibility;
 
     // LIVE ATTRIBUTES //
-    private Manager manager;
     private List<Officer> pendingOfficers;
     private List<Officer> approvedOfficers;
 
@@ -25,10 +24,9 @@ public class LiveProject extends TemplateProject {
     private Applicant applicant;
 
     public LiveProject(String name, String neighbourhood, String type1, int nType1, double type1price, String type2, 
-    int nType2, double type2price, String openDate, String closeDate, String managerName, int noOfOfficers, boolean visibility, Manager manager) {
+    int nType2, double type2price, String openDate, String closeDate, String managerName, int noOfOfficers, boolean visibility) {
         super(name, neighbourhood, type1, nType1, type1price, type2, nType2,
      type2price, openDate, closeDate, managerName, noOfOfficers, visibility);
-        this.manager = manager;
         this.pendingOfficers = new ArrayList<>();
         this.approvedOfficers = new ArrayList<>();
         this.applicant = null;
@@ -38,7 +36,7 @@ public class LiveProject extends TemplateProject {
         this.visibility = !this.visibility;
     }
 
-    //getters//
+    // GETTERS //
     public String getName() {
         return this.name;
     }

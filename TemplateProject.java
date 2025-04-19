@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.List;
 
 public class TemplateProject {
 
@@ -89,5 +90,36 @@ public class TemplateProject {
 
     public List<Enquiry> getEnquiries() {
         return this.enquiries;
+    }
+
+    // SETTERS (KEEP TRACK OF NUMBER OF FLATS ONLY) //
+    public void setNumOfType1(int n) {
+        this.nType1 = n;
+    }
+
+    public void setNumOfType2(int n) {
+        this.nType2 = n;
+    }
+
+    public void addEnquiry(Enquiry e) {
+        this.enquiries.add(e);
+    }
+
+    // DISPLAY //
+    public void displayProjectDetails() {
+    System.out.println("---------------------------------------");
+    System.out.printf("Project Name: %s\n", this.getName());
+    System.out.printf("Neighborhood: %s\n", this.getNeighbourhood());
+    System.out.println();
+    System.out.printf("Flat Type 1: %s\n", this.getType1());
+    System.out.printf("Units: %d\n", this.getNumOfType1());
+    System.out.printf("Price: $%.2f\n", this.getType1Price());
+    System.out.println();
+    System.out.printf("Flat Type 2: %s\n", this.getType2());
+    System.out.printf("Units: %d\n", this.getNumOfType2());
+    System.out.printf("Price: $%.2f\n", this.getType2Price());
+    System.out.println();
+    System.out.println("Application Period: " + this.getOpenDate() + " to " + this.getCloseDate());
+    System.out.printf("Manager in charge: %s\n" + this.getManagerName());
     }
 }
