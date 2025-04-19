@@ -1,5 +1,3 @@
-import java.util.Scanner;
-
 public class Applicant extends User{
     private TemplateProject projApplied;
     private int appliedType;
@@ -7,8 +5,6 @@ public class Applicant extends User{
     private int eligibilityStatus;
     private int appliedFlatType;
     private boolean hasBookedFlat = false;
-
-    Scanner scan = new Scanner(System.in);
 
     public Applicant(String name, String userID, int age, String maritalStatus) {
         super(name, userID, age, maritalStatus);

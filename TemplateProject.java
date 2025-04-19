@@ -15,6 +15,8 @@ public class TemplateProject {
     private String closeDate;
     private String managerName;
     private int nOfficers;
+    private List<String> pendingOfficers;
+    private List<String> approvedOfficers;
     private boolean visibility;
     private List<Enquiry> enquiries;
 
@@ -23,8 +25,10 @@ public class TemplateProject {
         this.name = name;
         this.neighbourhood = neighbourhood;
         this.type1 = type1;
+        this.nType1 = nType1;
         this.type1price = type1price;
         this.type2 = type2;
+        this.nType2 = nType2;
         this.type2price = type2price;
         this.openDate = openDate;
         this.closeDate = closeDate;
@@ -32,6 +36,9 @@ public class TemplateProject {
         this.nOfficers = nOfficers;
         this.visibility = visibility;
         this.enquiries = new ArrayList<>();
+
+        System.out.println("Number of Type 1: " + nType1);
+        System.out.println("Number of Type 2: " + nType2);
     }
 
     // GETTERS //
@@ -92,7 +99,15 @@ public class TemplateProject {
         return this.enquiries;
     }
 
-    // SETTERS (KEEP TRACK OF NUMBER OF FLATS ONLY) //
+    public List<String> getPendingOfficers() {
+        return this.pendingOfficers;
+    }
+
+    public List<String> getApprovedOfficers() {
+        return this.approvedOfficers;
+    }
+
+    // SETTERS (KEEP TRACK OF NUMBER OF FLATS AND PENDING/APPROVED OFFICERS) //
     public void setNumOfType1(int n) {
         this.nType1 = n;
     }
@@ -103,6 +118,14 @@ public class TemplateProject {
 
     public void addEnquiry(Enquiry e) {
         this.enquiries.add(e);
+    }
+
+    public void setPendingOfficers(List<String> pendingOfficerList) {
+        this.pendingOfficers = pendingOfficerList;
+    }
+
+    public void setApprovedOfficers(List<String> approvedOfficerList) {
+        this.approvedOfficers = approvedOfficerList;
     }
 
     // DISPLAY //
@@ -120,6 +143,6 @@ public class TemplateProject {
     System.out.printf("Price: $%.2f\n", this.getType2Price());
     System.out.println();
     System.out.println("Application Period: " + this.getOpenDate() + " to " + this.getCloseDate());
-    System.out.printf("Manager in charge: %s\n" + this.getManagerName());
+    System.out.printf("Manager in charge: %s\n", this.getManagerName());
     }
 }

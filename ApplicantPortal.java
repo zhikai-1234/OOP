@@ -12,12 +12,18 @@ public class ApplicantPortal {
 	EnquiryHandler eh = new EnquiryHandler();
 	
 	public ApplicantPortal(Applicant a) {
+		pm.loadTemplateProjects("ProjectList.csv");
 		this.applicant = a;
 		this.templateProjects = pm.getTemplateProjects();
+		System.out.println("Number of projects: " + templateProjects.size());
+		System.out.println("Applicant's marital status: " + applicant.getMaritalStatus());
+		System.out.println("Applicant's eligibility status: " + applicant.getEligibilityStatus());
 	}
 	
 	
 	public void showOptions() {
+		System.out.println();
+		System.out.println("=================================================");
 		System.out.println("Welcome, " + applicant.getName());
 		System.out.println("1. View Projects");
         System.out.println("2. Apply for project");
@@ -27,40 +33,63 @@ public class ApplicantPortal {
         System.out.println("6. Submit an enquiry");
         System.out.println("7. View all enquiries");
         System.out.println("8. Quit Program");
-        System.out.print("Enter your choice: ");
+		System.out.println("=================================================");
+		System.out.println();
 	}
 	
 	public void portal() {
-		sc.nextLine();
-		System.out.print("Enter your choice: ");
-		int choice = sc.nextInt();
-		sc.nextLine();
+
 		boolean exit = false;
+
 		do {
+
+			showOptions();
+			System.out.print("Enter your choice: ");
+			int choice = sc.nextInt();
+			sc.nextLine();
+
 			switch (choice) {
 			
-			case 1 -> viewProjects(applicant);
+			case 1 -> {
+				if (applicant.getMaritalStatus().equals("Single")) {
+					for (TemplateProject p : templateProjects) {
+						pm.display2RoomProjectDetails(p);
+					}
+				}
+				else if (applicant.getMaritalStatus().equals("Married")) {
+					for (TemplateProject p : templateProjects) {
+						pm.display2and3RoomProjectDetails(p);
+					}
+				}
+			}
 			
 			case 2 -> {
 				int i = 1;
 				for (TemplateProject p : templateProjects) {
+					System.out.println();
 					System.out.printf("Project %d\n", i);
-					pm.displayProjectDetails(p);
+					pm.display2and3RoomProjectDetails(p);
 					i++;
 				}
 				System.out.println("Choose from these projects");
 				int projChoice = sc.nextInt();
-				ah.applyForProject(applicant, templateProjects.get(i - 1));
-				System.out.println("Project successfully applied.");
+				ah.applyForProject(applicant, templateProjects.get(projChoice - 1), sc);
 				}
 				
 			case 3 -> ah.viewAppliedProject(applicant);
 			
-			case 4 -> ah.bookFlat(applicant);
+			case 4 -> ah.bookFlat(applicant, sc);
 				
-			case 5 -> ah.withdrawApplicationBeforeApproval(applicant);
+			case 5 -> {
+				if (applicant.hasBookedFlat() == false) {
+					ah.withdrawApplicationBeforeApproval(applicant);
+				}
+				//else {
+					//ah.withdrawApplicationAfterApproval(applicant);
+				//}
+			}
 				
-			case 6 -> eh.submitEnquiry(applicant);
+			case 6 -> eh.submitEnquiry(applicant, sc);
 				
 			case 7 -> eh.displayAndManageUserEnquiries(applicant);
 				
@@ -82,7 +111,7 @@ public class ApplicantPortal {
 		// Display applied project (even if hidden)
 		if (appliedProject != null) {
 			System.out.println("\n=== APPLIED PROJECT ===");
-			pm.displayProjectDetails(appliedProject);
+			pm.display2and3RoomProjectDetails(appliedProject);
 		}
 	
 		System.out.println("\n=== AVAILABLE PROJECTS ===");
@@ -97,7 +126,7 @@ public class ApplicantPortal {
 			}
 
 			if(p.getVisibility() && isEligible && !isApplied) {
-				pm.displayProjectDetails(appliedProject);
+				pm.display2and3RoomProjectDetails(appliedProject);
 			}	
     	}
 	}

@@ -133,4 +133,8 @@ public class UserRepository {
         System.out.println("Manager not found");
         return null;
     }
+
+    public List<User> getAllUsers() {
+        return this.users;
+    }
 }

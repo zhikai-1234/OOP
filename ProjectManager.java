@@ -22,30 +22,42 @@ public class ProjectManager {
              String line;
              boolean isFirstLine = true;
 
-             while ((line = reader.readLine()) != null) {
-                 if (isFirstLine) {
-                     isFirstLine = false;
-                     continue;
-                 }
-                 String[] parts = line.split(",", -1);
-                 if (parts.length < 15) continue;
+            while ((line = reader.readLine()) != null) {
+                if (isFirstLine) {
+                    isFirstLine = false;
+                    continue;
+                }
+                String[] parts = line.split(",", -1);
+                if (parts.length < 15) continue;
 
-                 String projName = parts[0].trim();
-                 String neighborhood = parts[1].trim();
-                 String flatType1 = parts[2].trim();
-                 int numType1 = Integer.parseInt(parts[3].trim());
-                 double price1 = Double.parseDouble(parts[4].trim());
-                 String flatType2 = parts[5].trim();
-                 int numType2 = Integer.parseInt(parts[6].trim());
-                 double price2 = Double.parseDouble(parts[7].trim());
-                 String openDate = parts[8].trim();
-                 String closeDate = parts[9].trim();
-                 String managerName = parts[10].trim();
-                 int numOfficers = Integer.parseInt(parts[11].trim());
-                 boolean visibility = Boolean.parseBoolean(parts[14].trim());
+                String projName = parts[0].trim();
+                String neighborhood = parts[1].trim();
+                String flatType1 = parts[2].trim();
+                int numType1 = Integer.parseInt(parts[3].trim());
+                double price1 = Double.parseDouble(parts[4].trim());
+                String flatType2 = parts[5].trim();
+                int numType2 = Integer.parseInt(parts[6].trim());
+                double price2 = Double.parseDouble(parts[7].trim());
+                String openDate = parts[8].trim();
+                String closeDate = parts[9].trim();
+                String managerName = parts[10].trim();
+                int numOfficers = Integer.parseInt(parts[11].trim());
+                String pendingOfficersField = parts[12].trim(); 
+                String approvedOfficersField = parts[13].trim(); 
+                boolean visibility = Boolean.parseBoolean(parts[14].trim());
 
-                 templateProjects.add(new TemplateProject(projName, neighborhood, flatType1, numType1, price1,
-                         flatType2, numType2, price2, openDate, closeDate, managerName, numOfficers, visibility));
+                List<String> pendingOfficers = parseOfficerList(pendingOfficersField);
+                List<String> approvedOfficers = parseOfficerList(approvedOfficersField);
+
+                TemplateProject t = new TemplateProject(projName, neighborhood, flatType1, numType1, price1,
+                flatType2, numType2, price2, openDate, closeDate, managerName, numOfficers, visibility);
+
+                t.setPendingOfficers(pendingOfficers);
+                t.setApprovedOfficers(approvedOfficers);
+
+                templateProjects.add(t);
+
+                
              }
              reader.close();
          } 
@@ -54,13 +66,23 @@ public class ProjectManager {
             }
     }
 
+    private List<String> parseOfficerList(String field) {
+        List<String> officers = new ArrayList<>();
+        if (field != null && !field.trim().isEmpty()) {
+            String[] names = field.split("\\|");
+            for (String name : names) {
+                name = name.trim();
+                if (!name.isEmpty()) {
+                    officers.add(name);
+                }
+            }
+        }
+        return officers;
+    }
+
     // GETTERS //
 
     public List<TemplateProject> getTemplateProjects() {
-        if (this.templateProjects.isEmpty()) {
-            loadTemplateProjects("ProjectList.csv");
-            return this.templateProjects;
-        }
         return this.templateProjects;
     }
 
@@ -71,7 +93,25 @@ public class ProjectManager {
     }
 
     // DISPLAY //
-    public void displayProjectDetails(TemplateProject p) {
+    public void display2RoomProjectDetails(TemplateProject p) {
+        if (p.getVisibility() == true) {
+            //System.out.println("DEBUG: Type1 flats = " + p.getNumOfType1());
+            System.out.println("---------------------------------------");
+            System.out.printf("Project Name: %s\n", p.getName());
+            System.out.printf("Neighborhood: %s\n", p.getNeighbourhood());
+            System.out.println();
+            System.out.printf("Flat Type 1: %s\n", p.getType1());
+            System.out.printf("Units: %d\n", p.getNumOfType1());
+            System.out.printf("Price: $%.2f\n", p.getType1Price());
+            System.out.println("Application Period: " + p.getOpenDate() + " to " + p.getCloseDate());
+            System.out.printf("Manager in charge: %s\n", p.getManagerName());
+            System.out.println("Approved Officers: " + p.getApprovedOfficers());
+            System.out.println("Pending Officers: " + p.getPendingOfficers());
+        }
+    }
+
+    public void display2and3RoomProjectDetails(TemplateProject p) {
+        //System.out.println("DEBUG: Type1 flats = " + p.getNumOfType1() + ", Type2 flats = " + p.getNumOfType2());
         if (p.getVisibility() == true) {
             System.out.println("---------------------------------------");
             System.out.printf("Project Name: %s\n", p.getName());
@@ -86,7 +126,9 @@ public class ProjectManager {
             System.out.printf("Price: $%.2f\n", p.getType2Price());
             System.out.println();
             System.out.println("Application Period: " + p.getOpenDate() + " to " + p.getCloseDate());
-            System.out.printf("Manager in charge: %s\n" + p.getManagerName());
+            System.out.printf("Manager in charge: %s\n", p.getManagerName());
+            System.out.println("Approved Officers: " + p.getApprovedOfficers());
+            System.out.println("Pending Officers: " + p.getPendingOfficers());
         }
     }
 }

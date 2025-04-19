@@ -27,4 +27,9 @@ public class Enquiry {
     }public String getProjectName() {
         return this.projectName;
     }
+
+    // SETTERS //
+    public void setResponse(String response) {
+        this.enquiryResponse = response;
+    }
 }

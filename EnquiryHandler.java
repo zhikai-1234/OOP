@@ -4,21 +4,18 @@ import java.util.Scanner;
 
 public class EnquiryHandler {
 
-    private List<Applicant> applicants;
     private List<TemplateProject> templateProjects;
 
     ProjectManager pm = new ProjectManager();
 
     public EnquiryHandler() {
-        this.applicants = new ArrayList<>();
         this.templateProjects = pm.getTemplateProjects();
     }
 
-    public void submitEnquiry(Applicant a) {
-        Scanner sc = new Scanner(System.in);
+    public void submitEnquiry(Applicant a, Scanner sc) {
     
         for (TemplateProject p : templateProjects) {
-            pm.displayProjectDetails(p);
+            pm.display2and3RoomProjectDetails(p);
         }
         System.out.print("Enter the project name you want to submit an enquiry for: ");
         String projectName = sc.nextLine().trim();
@@ -102,4 +99,27 @@ public class EnquiryHandler {
         }
     }
     
+    public void replyToEnquiriesOfficer(Officer o, TemplateProject proj, Scanner sc) { // must pass officer's assigned project as argument
+        if (proj.getEnquiries().isEmpty()) {
+            System.out.println("No enquiries found for this project.");
+        }
+        else {
+            int i = 1;
+            System.out.println("Displaying all available enquiries for this project...");
+            System.out.println();
+            for (Enquiry e : proj.getEnquiries()) {
+                System.out.printf("[%d] Question: %s\n", i, e.getEnquiry());
+            }
+            System.out.println("Enter the number of the enquiry you would like to reply to: ");
+            int enquiryChoice = sc.nextInt();
+            sc.nextLine();
+            System.out.println("Now replying to:");
+            System.out.println(proj.getEnquiries().get(enquiryChoice - 1).getEnquiry());
+            System.out.println();
+            System.out.println("Enter your response below:");
+            String reply = sc.nextLine();
+            proj.getEnquiries().get(enquiryChoice - 1).setResponse(reply);
+            System.out.println("\nReply submitted successfully.");
+        }
+    }
 }
