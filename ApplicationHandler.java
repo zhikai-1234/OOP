@@ -23,10 +23,10 @@ public class ApplicationHandler {
             }
 
             case 1 -> {
-                if (a.getApplicationStatus().equals("No Project Applied") && 
-                a.getAppliedType() == 1) {
+                if ((a.getApplicationStatus().equals("No Project Applied")||a.getApplicationStatus().equals("Unsuccessful"))) {
                     this.projectsPendingApproval.put(a, p);
                     a.setProjApplied(p);
+                    a.setAppliedType(1);
                     a.setApplicationStatus("Pending Approval");
                     
                 }
@@ -41,7 +41,7 @@ public class ApplicationHandler {
             }
 
             case 2 -> {
-                if (a.getApplicationStatus().equals("No Project Applied") &&
+                if ((a.getApplicationStatus().equals("No Project Applied")||a.getApplicationStatus().equals("Unsuccessful")) &&
                 (a.getAppliedType() == 1 || a.getAppliedType() == 2)) {
                     this.projectsPendingApproval.put(a, p);
                     a.setProjApplied(p);
@@ -70,6 +70,42 @@ public class ApplicationHandler {
             System.out.println("ERROR: No project to withdraw from for this user");
         }
     }
+
+
+    public static void bookFlat(Applicant a){
+        if(!"Approved".equals(a.getApplicationStatus())){
+            System.out.println("ERROR: Applicant not approved for any project.");
+            return;
+        }
+
+        LiveProject p = a.getProjApplied();
+        if(p == null){
+            System.out.println("ERROR: No project applied for.");
+            return;
+        }
+
+        Scanner sc = new Scanner(System.in);
+
+        system.out.println("Numbers of unit for " + p.getName() + ":");
+       if(a.getAppliedType() == 1){
+            System.out.println("2-Room: " + p.getnType1());
+        }
+        else if(a.getAppliedType() == 2){
+            System.out.println("3-Room: " + p.getnType2());
+        }
+
+        System.out.print("Do you want to book a flat? (Y/N): ");
+        String choice = sc.nextLine().trim().toUpperCase();
+        if(!choice.equals("Y")){
+            System.out.println("Booking cancelled.");
+            return;
+        }
+        else{
+        OfficerPortal.submitBookingRequest(a, p,a.getAppliedType());
+        }
+        
+    }
+
 }
 
 

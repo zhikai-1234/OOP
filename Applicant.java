@@ -6,6 +6,7 @@ public class Applicant extends User{
     public String applicationStatus;
     private int eligibilityStatus;
     private int appliedFlatType;
+    private boolean hasBookedFlat = false;
 
     Scanner scan = new Scanner(System.in);
 
@@ -44,6 +45,14 @@ public class Applicant extends User{
         return this.appliedType;
     }
 
+    public TemplateProject getProjApplied() {
+        return this.projApplied;
+    }
+
+    public boolean hasBookedFlat() {
+        return this.hasBookedFlat;
+    }
+
     // SETTERS //
     public void setApplicationStatus(String status) {
         this.applicationStatus = status;
@@ -51,5 +60,12 @@ public class Applicant extends User{
 
     public void setAppliedType(int type) {
         this.appliedType = type;
+    }
+
+    public void setProjApplied(TemplateProject proj) {
+        this.projApplied = proj;
+    }
+    public void setBookedFlat(boolean status) {
+        this.hasBookedFlat = status;
     }
 }

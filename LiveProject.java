@@ -20,8 +20,6 @@ public class LiveProject extends TemplateProject {
     private Manager manager;
     private List<Officer> pendingOfficers;
     private List<Officer> approvedOfficers;
-    private int nType1;
-    private int nType2;
 
     // USER ATTRIBUTES //
     private Applicant applicant;
@@ -38,5 +36,17 @@ public class LiveProject extends TemplateProject {
 
     public void toggleVisibility() {
         this.visibility = !this.visibility;
+    }
+
+    //getters//
+    public String getName() {
+        return this.name;
+    }
+
+    public int getnType1() {
+        return super.getNumOfType1();
+    }
+    public int getnType2() {
+        return super.getNumOfType2();
     }
 }

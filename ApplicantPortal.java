@@ -65,9 +65,6 @@ public class ApplicantPortal {
 		}
 	
 		Project appliedProject = a.getProjApplied();
-		if (appliedProject == null) {
-			appliedProject = appHandler.getProjectsPendingApproval().get(a);
-		}
 	
 		// Display applied project (even if hidden)
 		if (appliedProject != null) {
@@ -78,10 +75,18 @@ public class ApplicantPortal {
 		System.out.println("\n=== AVAILABLE PROJECTS ===");
 		for (Project p : projects) {
 			boolean isApplied = p.equals(appliedProject);
-			if (p.getVisibility() && !isApplied) {
-				p.displayProjectDetails();
+			boolean isEligible = false;
+
+			if(a.getEligibilityStatus() == 1 && p.getFlatType1().equals("2-Room")) {
+				isEligible = true;
+			} else if (a.getEligibilityStatus() == 2 && (p.getFlatType1().equals("2-Room") || p.getFlatType2().equals("3-Room"))) {
+				isEligible = true;
 			}
-		}
+
+			if(p.getVisibility() && isEligible && !isApplied) {
+				p.displayProjectDetails();
+			}	
+    	}
 	}
-	
 }
+	
