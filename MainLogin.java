@@ -6,8 +6,7 @@ public static void main(String[] args) {
     UserRepository userRepo = new UserRepository();
     userRepo.loadUsers("ApplicantList.csv", "applicant");
     
-    // Print user count with two newlines after
-    System.out.println("Total users loaded: " + userRepo.getAllApplicants().size() + "\n");
+    System.out.println("Total users loaded: " + userRepo.getAllApplicants().size());
     
     Scanner sc = new Scanner(System.in);
     User user = null;
@@ -15,10 +14,10 @@ public static void main(String[] args) {
     while (user == null) {
         // Explicitly flush before login attempt
         System.out.flush();
-        user = userRepo.login(userRepo.getAllApplicants());
+        user = userRepo.login(userRepo.getAllApplicants(), sc);
         
         if (user == null) {
-            System.out.println("\nTry again.\n");
+            System.out.println("Try again.");
         }
     }
 

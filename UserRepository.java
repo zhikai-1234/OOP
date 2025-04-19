@@ -48,13 +48,9 @@ public class UserRepository {
             }
     }
 
-    public <T extends User> T login(List<T> users) {
-        Scanner scanner = new Scanner(System.in);
-        
-        // Clear the buffer first
-        System.out.flush();
-        
-        System.out.print("Enter UserID: ");  // Using print() instead of println()
+    public <T extends User> T login(List<T> users, Scanner scanner) {
+
+        System.out.print("Enter UserID: ");  
         String userID = scanner.nextLine().trim();
         
         System.out.print("Enter Password: ");
