@@ -6,6 +6,7 @@ public class MainLogin {
         UserRepository userRepo = new UserRepository();
         userRepo.loadUsers("ApplicantList.csv", "applicant");
         userRepo.loadUsers("OfficerList.csv", "officer");
+        userRepo.loadUsers("ManagerList.csv", "manager");
         
         System.out.println("Total users loaded: " + userRepo.getAllApplicants().size());
         
@@ -32,7 +33,10 @@ public class MainLogin {
                 appPortal.portal();
             }
 
-            // future: add manager case
+            else if (user instanceof Manager manager) {
+                ManagerPortal manPortal = new ManagerPortal(manager);
+                manPortal.portal();
+            }
     }
 }
 

@@ -90,6 +90,10 @@ public class TemplateProject {
     public int getNumOfficers() {
         return this.nOfficers;
     }
+    
+    public int getRemainingOfficerSlots() {
+        return nOfficers - approvedOfficers.size();
+    }
 
     public boolean getVisibility() {
         return this.visibility;
@@ -127,6 +131,51 @@ public class TemplateProject {
     public void setApprovedOfficers(List<String> approvedOfficerList) {
         this.approvedOfficers = approvedOfficerList;
     }
+    
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setNeighbourhood(String neighbourhood) {
+        this.neighbourhood = neighbourhood;
+    }
+
+    public void setType1(String type1) {
+        this.type1 = type1;
+    }
+
+    public void setType1Price(double type1price) {
+        this.type1price = type1price;
+    }
+    
+    public void setType2(String type2) {
+        this.type2 = type2;
+    }
+    
+    public void setType2Price(double type2price) {
+        this.type2price = type2price;
+    }
+    
+    public void setOpenDate(String openDate) {
+        this.openDate = openDate;
+    }
+
+    public void setCloseDate(String closeDate) {
+        this.closeDate = closeDate;
+    }
+
+    public void setManagerName(String managerName) {
+        this.managerName = managerName;
+    }
+
+    public void setNumOfficers(int nOfficers) {
+        this.nOfficers = nOfficers;
+    }
+ 
+    public void setVisibility(boolean visibility) {
+        this.visibility = visibility;
+    }
+    
 
     // DISPLAY //
     public void displayProjectDetails() {
@@ -144,5 +193,9 @@ public class TemplateProject {
     System.out.println();
     System.out.println("Application Period: " + this.getOpenDate() + " to " + this.getCloseDate());
     System.out.printf("Manager in charge: %s\n", this.getManagerName());
+    System.out.println("Officer Slots: " + this.getNumOfficers());
+    System.out.println("Visibility: " + (this.getVisibility() ? "Visible" : "Hidden"));
+    System.out.println("Approved Officers: " + this.getApprovedOfficers());
+    System.out.println("Pending Officers: " + this.getPendingOfficers());
     }
 }
