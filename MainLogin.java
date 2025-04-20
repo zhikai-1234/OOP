@@ -1,4 +1,4 @@
-import java.util.Scanner;
+import java.util.*;
 
 public class MainLogin {
 
@@ -8,14 +8,42 @@ public class MainLogin {
         userRepo.loadUsers("OfficerList.csv", "officer");
         userRepo.loadUsers("ManagerList.csv", "manager");
 
-        ProjectManager pm = new ProjectManager();
-	    ApplicationHandler ah = new ApplicationHandler();
-	    EnquiryHandler eh = new EnquiryHandler();
+        List<TemplateProject> templateProjects = new ArrayList<>();
+        List<LiveProject> liveProjects = new ArrayList<>();
+
+        Map<Applicant, TemplateProject> projectsPendingApproval = new HashMap<>();
+        Map<Applicant, BookingRequest> bookingsPendingApproval = new HashMap<>(); 
+
+        ProjectManager pm = new ProjectManager(templateProjects, liveProjects);
+        pm.loadTemplateProjects("ProjectList.csv");
+	    ApplicationHandler ah = new ApplicationHandler(pm, userRepo, projectsPendingApproval, bookingsPendingApproval);
+	    EnquiryHandler eh = new EnquiryHandler(pm);
         
         System.out.println("Total users loaded: " + userRepo.getAllApplicants().size());
         
         Scanner sc = new Scanner(System.in);
-        User user = null;
+        User user;
+
+        for (TemplateProject t : pm.getTemplateProjects()) {
+            for (Officer o : userRepo.getAllOfficers()) {
+                if (t.getApprovedOfficers().contains(o.getName())) {
+                    o.setAssignedProjectAsOfficer(t);
+                }
+                else if (t.getPendingOfficers().contains(o.getName())) {
+                    o.setAppliedProjectAsOfficer(t);
+                }
+            }
+        }
+
+        // DEBUG STATEMENT //
+        for (Officer o: userRepo.getAllOfficers()) {
+            if (o.getAssignedProjectAsOfficer() == null && o.getAppliedProjectAsOfficer() != null) { // applied but not approved
+                System.out.printf("%s : %s", o.getName(), o.getAppliedProjectAsOfficer());
+            }
+            else if (o.getAssignedProjectAsOfficer() != null && o.getAppliedProjectAsOfficer() == null) { // approved and not applied
+                System.out.printf("%s : %s", o.getName(), o.getAssignedProjectAsOfficer());
+            }
+        }
 
         boolean quitProgram = false;
 
@@ -38,7 +66,7 @@ public class MainLogin {
             }
 
             else if (user instanceof Manager manager) {
-                ManagerPortal manPortal = new ManagerPortal(manager, pm, eh);
+                ManagerPortal manPortal = new ManagerPortal(manager, pm, ah, eh);
                 manPortal.portal();
             }
 

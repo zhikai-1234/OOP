@@ -1,23 +1,20 @@
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Scanner;
 
 public class ManagerPortal {
     private Manager manager;
     private ProjectManager projectManager;
+    private ApplicationHandler applicationHandler;
     private EnquiryHandler enquiryHandler;
-    private List<TemplateProject> templateProjects;
-    private static Map<Applicant, BookingRequest> bookingsPendingApproval = new HashMap<>();
+
     Scanner scanner = new Scanner(System.in);
 
-    public ManagerPortal(Manager manager, ProjectManager projectManager, EnquiryHandler enquiryHandler) {
+    public ManagerPortal(Manager manager, ProjectManager projectManager, ApplicationHandler appHandler, EnquiryHandler enquiryHandler) {
         this.manager = manager;
         this.projectManager = projectManager;
+        this.applicationHandler = appHandler;
         this.enquiryHandler = enquiryHandler; 
-        this.projectManager.loadTemplateProjects("ProjectList.csv");
-        this.templateProjects = projectManager.getTemplateProjects();
     }
 
     public void showManagerOptions() {
@@ -98,9 +95,7 @@ public class ManagerPortal {
 
         TemplateProject project = new TemplateProject(name, neighborhood, type1, nType1, price1, type2, nType2, price2, openDate, closeDate, manager.getName(), numOfficers, visibility);
 
-        templateProjects.add(project);
-
-        projectManager.updateTemplateProjects(templateProjects);
+        projectManager.getTemplateProjects().add(project);
 
         System.out.println("Project successfully created.");
     }
@@ -333,13 +328,13 @@ public class ManagerPortal {
     // Not very sure if it will work cause even if applicant send a request, i cant approve or reject it
     // because the session for Applicant will end once he logs out. 
     public void manageBookingRequests() {
-        if (bookingsPendingApproval.isEmpty()) {
+        if (applicationHandler.getBookingsPendingApproval().isEmpty()) {
             System.out.println("There are no booking requests to review.");
             return;
         }
 
         Scanner scanner = new Scanner(System.in);
-        List<BookingRequest> requests = new ArrayList<>(bookingsPendingApproval.values());
+        List<BookingRequest> requests = new ArrayList<>(applicationHandler.getBookingsPendingApproval().values());
 
         System.out.println("Pending Booking Requests:");
         for (int i = 0; i < requests.size(); i++) {
@@ -385,12 +380,12 @@ public class ManagerPortal {
                 project.setNumOfType2(project.getNumOfType2() - 1);
             }
 
-            bookingsPendingApproval.remove(applicant);
+            applicationHandler.getBookingsPendingApproval().remove(applicant);
             System.out.println("Booking approved.");
 
         } else if (decision.equals("R")) {
             applicant.setApplicationStatus("Unsuccessful");
-            bookingsPendingApproval.remove(applicant);
+            applicationHandler.getBookingsPendingApproval().remove(applicant);
             System.out.println("Booking rejected.");
         } else {
             System.out.println("Invalid input. No action taken.");

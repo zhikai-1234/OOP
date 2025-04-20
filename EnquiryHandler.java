@@ -4,19 +4,16 @@ import java.util.Scanner;
 
 public class EnquiryHandler {
 
-    private List<TemplateProject> templateProjects;
+    private ProjectManager pm;
 
-    ProjectManager pm = new ProjectManager();
-
-    public EnquiryHandler() {
-        pm.loadTemplateProjects("ProjectList.csv");
-        this.templateProjects = pm.getTemplateProjects();
+    public EnquiryHandler(ProjectManager projManager) {
+        this.pm = projManager;
     }
 
     public void submitEnquiry(Applicant a, Scanner sc) {
         
         int i = 1;
-        for (TemplateProject p : templateProjects) {
+        for (TemplateProject p : pm.getTemplateProjects()) {
             System.out.printf("[%d] %s\n", i, p.getName());
             i++;
         }
@@ -25,7 +22,7 @@ public class EnquiryHandler {
         int projChoice = sc.nextInt();
         sc.nextLine();
         TemplateProject selectedProject = null;
-        selectedProject = templateProjects.get(projChoice - 1);
+        selectedProject = pm.getTemplateProjects().get(projChoice - 1);
 
         if (selectedProject == null) {
             System.out.println("Project not found. Please check the name and try again.");
@@ -46,7 +43,7 @@ public class EnquiryHandler {
         List<TemplateProject> userProjects = new ArrayList<>();
         List<Enquiry> userEnquiries = new ArrayList<>();
     
-        for (TemplateProject project : templateProjects) {
+        for (TemplateProject project : pm.getTemplateProjects()) {
             for (Enquiry enquiry : project.getEnquiries()) {
                 if (enquiry.getUserID().equals(applicant.getUserID())) {
                     userProjects.add(project);
@@ -112,6 +109,7 @@ public class EnquiryHandler {
             System.out.println();
             for (Enquiry e : proj.getEnquiries()) {
                 System.out.printf("[%d] Question: %s\n", i, e.getEnquiry());
+                i++;
             }
             System.out.println("Enter the number of the enquiry you would like to reply to: ");
             int enquiryChoice = sc.nextInt();

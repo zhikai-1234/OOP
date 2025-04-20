@@ -1,22 +1,22 @@
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 public class ApplicationHandler {
 
-    private List<Applicant> applicants;
     private List<TemplateProject> templateProjects;
+    private ProjectManager pm;
+    private UserRepository userRepo;
+
     private Map<Applicant, TemplateProject> projectsPendingApproval;
-    private Map<Applicant, BookingRequest> bookingsPendingApproval; 
+    private Map<Applicant, BookingRequest> bookingsPendingApproval;
 
-    ProjectManager pm = new ProjectManager();
-    UserRepository userRepo = new UserRepository();
 
-    public ApplicationHandler() {
-        this.applicants = userRepo.getAllApplicants();
+    public ApplicationHandler(ProjectManager projManager, UserRepository userRepo, Map<Applicant, TemplateProject> projectsPendingApproval, Map<Applicant, BookingRequest> bookingsPendingApproval) {
+        this.pm = projManager;
+        this.userRepo = userRepo;
         this.templateProjects = pm.getTemplateProjects();
-        this.projectsPendingApproval = new HashMap<>();
-        this.bookingsPendingApproval = new HashMap<>();
+        this.projectsPendingApproval = projectsPendingApproval;
+        this.bookingsPendingApproval = bookingsPendingApproval;
     }
 
     public void applyForProject(Applicant a, TemplateProject p, Scanner sc) {

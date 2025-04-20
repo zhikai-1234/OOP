@@ -10,9 +10,9 @@ public class ProjectManager {
     private List<LiveProject> liveProjects; // for editing
 
     // CONSTRUCTOR //
-    public ProjectManager() {
-        this.templateProjects = new ArrayList<>();
-        this.liveProjects = new ArrayList<>();
+    public ProjectManager(List<TemplateProject> templateProjects, List<LiveProject> liveProjects) {
+        this.templateProjects = templateProjects;
+        this.liveProjects = liveProjects;
     }
 
     // LOADER METHODS //
@@ -84,6 +84,10 @@ public class ProjectManager {
 
     public List<TemplateProject> getTemplateProjects() {
         return this.templateProjects;
+    }
+
+    public List<LiveProject> getLiveProjects() {
+        return this.liveProjects;
     }
 
     // SETTERS //

@@ -3,7 +3,6 @@ import java.util.*;
 public class OfficerPortal extends ApplicantPortal {
 
     private Applicant applicant;
-	private List<TemplateProject> templateProjects;
 	private Officer officer;
     private ApplicationHandler appHandler;
     private boolean asApplicant;
@@ -20,8 +19,6 @@ public class OfficerPortal extends ApplicantPortal {
         this.pm = pm;
         this.ah = ah;
         this.eh = eh;
-        pm.loadTemplateProjects("ProjectList.csv");
-		this.templateProjects = pm.getTemplateProjects();
         this.asApplicant = false; // set default intention to apply as applicant as false
 	}
 
@@ -75,23 +72,22 @@ public class OfficerPortal extends ApplicantPortal {
 
                 case 1 -> {
                     int i = 1;
-                    for (TemplateProject p : templateProjects) {
+                    for (TemplateProject p : pm.getTemplateProjects()) {
                         System.out.printf("Project %d\n", i);
                         pm.display2and3RoomProjectDetails(p);
                     }
                     System.out.print("Enter number of project you wish to register for: ");
                     int projChoice = sc.nextInt();
                     sc.nextLine();
-                    registerAsOfficer(templateProjects.get(projChoice - 1));
-                    pm.updateTemplateProjects(templateProjects);
+                    registerAsOfficer(pm.getTemplateProjects().get(projChoice - 1));
                 }
 
                 case 2 -> {
-                    if (officer.getAppliedProject() == null) {
+                    if (officer.getAppliedProjectAsOfficer() == null) {
                         System.out.println("ERROR: You have not registered for any project as an officer.");
                     }
                     else {
-                        viewRegistrationStatus(officer.getAppliedProject());
+                        viewRegistrationStatus(officer.getAppliedProjectAsOfficer());
                     }
                 }
 
@@ -100,7 +96,8 @@ public class OfficerPortal extends ApplicantPortal {
                 }
 
                 case 4 -> {
-                    eh.replyToEnquiriesOfficer(officer, officer.getAssignedProject(), sc);
+                    System.out.println(officer.getAssignedProjectAsOfficer().getEnquiries());
+                    eh.replyToEnquiriesOfficer(officer, officer.getAssignedProjectAsOfficer(), sc);
                 }
 
                 case 5 -> {
@@ -133,8 +130,7 @@ public class OfficerPortal extends ApplicantPortal {
             List<String> pendingOfficersCopy = p.getPendingOfficers();
             pendingOfficersCopy.add(officer.getName());
             p.setPendingOfficers(pendingOfficersCopy);
-            officer.setOfficerRegistrationStatus("Applied");
-            officer.setAppliedProject(p);
+            officer.setAppliedProjectAsOfficer(p);
             System.out.printf("Successfully applied to be an officer for %s.\n", p.getName());
         }
     }
@@ -191,7 +187,6 @@ public class OfficerPortal extends ApplicantPortal {
         a.setBookedFlat(true);
         
         // Update project manager
-        ProjectManager pm = new ProjectManager();
         pm.addLiveProject(liveProject);
         
         ah.removeBookingsPendingApproval(a);
