@@ -20,14 +20,16 @@ public class MainLogin {
             }
         }
 
-            if (user instanceof Applicant applicant) {
-                ApplicantPortal appPortal = new ApplicantPortal(applicant);
-                appPortal.portal();
-            }
+            
 
-            else if (user instanceof Officer officer) {
+            if (user instanceof Officer officer) {
                 OfficerPortal offPortal = new OfficerPortal(officer);
                 offPortal.portal();
+            }
+
+            else if (user instanceof Applicant applicant) {
+                ApplicantPortal appPortal = new ApplicantPortal(applicant);
+                appPortal.portal();
             }
 
             // future: add manager case

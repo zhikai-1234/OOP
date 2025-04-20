@@ -15,6 +15,15 @@ public class Officer extends Applicant {
         this.officerRegistrationStatus = "Not Registered"; 
     }
 
+    //To preven applying as applicant for same project
+    @Override
+    public void setProjApplied(TemplateProject p) {
+        if (p.equals(this.getAssignedProject())) {
+            throw new IllegalStateException("Cannot apply for the same project you're handling as officer.");
+        }
+        super.setProjApplied(p);
+    }
+
     // GETTERS //
     public TemplateProject getAppliedProject() {
         return this.appliedProject;

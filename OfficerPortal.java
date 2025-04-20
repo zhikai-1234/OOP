@@ -12,6 +12,7 @@ public class OfficerPortal extends ApplicantPortal {
 
 	public OfficerPortal(Officer o) {
 		super(o);
+        this.officer = o;
         pm.loadTemplateProjects("ProjectList.csv");
         this.templateProjects = pm.getTemplateProjects();
         this.asApplicant = false; // set default intention to apply as applicant as false
@@ -38,71 +39,81 @@ public class OfficerPortal extends ApplicantPortal {
 
     @Override
     public void portal() {
-
         boolean exit = false;
-
-		do {
-            System.out.println("Are you logging in as an applicant or an officer today?");
+        do {
+            System.out.println("\nAre you logging in as an applicant or an officer today?");
             System.out.println("[1] Applicant");
             System.out.println("[2] Officer");
-            System.out.println("Enter your choice:");
+            System.out.println("[3] Exit");
+            System.out.print("Enter your choice: ");
             int roleChoice = sc.nextInt();
-            sc.nextLine();
-            if (roleChoice == 1) {
-                // applicant options
-            }
-            else if (roleChoice == 2) {
-                showOfficerOptions();
-                System.out.print("Enter your choice:");
-                int choice = sc.nextInt();
-                sc.nextLine();
+            sc.nextLine(); // Consume newline
 
-                switch(choice) {
-
-                    case 1 -> {
-                        int i = 1;
-                        for (TemplateProject p : templateProjects) {
-                            System.out.printf("Project %d\n", i);
-                            pm.display2and3RoomProjectDetails(p);
-                        }
-                        System.out.print("Enter number of project you wish to register for: ");
-                        int projChoice = sc.nextInt();
-                        sc.nextLine();
-                        registerAsOfficer(templateProjects.get(projChoice - 1));
-                    }
-
-                    case 2 -> {
-                        if (officer.getAppliedProject() == null) {
-                            System.out.println("ERROR: You have not registered for any project as an officer.");
-                        }
-                        else {
-                            viewRegistrationStatus(officer.getAppliedProject());
-                        }
-                    }
-
-                    case 3 -> {
-                        System.out.println("Feature currently unavailable...");
-                    }
-
-                    case 4 -> {
-                        eh.replyToEnquiriesOfficer(officer, officer.getAssignedProject(), sc);
-                    }
-
-                    case 5 -> {
-                        System.out.println("Feature currently unavailable...");
-                    }
-
-                    case 6 -> {
-                        System.out.println("Feature currently unavailable...");
-                    }
-
-                    case 7 -> {
-                        exit = true;
-                    }
-                }
+            switch (roleChoice) {
+                case 1 -> super.portal(); // Applicant menu
+                case 2 -> handleOfficerActions();
+                case 3 -> exit = true;
+                default -> System.out.println("Invalid choice.");
             }
         } while (!exit);
     }
+
+    private void handleOfficerActions() {
+        boolean officerExit = false;
+        do {
+            showOfficerOptions();
+            System.out.print("Enter your choice: ");
+            int choice = sc.nextInt();
+            sc.nextLine();
+            switch(choice) {
+
+                case 1 -> {
+                    int i = 1;
+                    for (TemplateProject p : templateProjects) {
+                        System.out.printf("Project %d\n", i);
+                        pm.display2and3RoomProjectDetails(p);
+                    }
+                    System.out.print("Enter number of project you wish to register for: ");
+                    int projChoice = sc.nextInt();
+                    sc.nextLine();
+                    registerAsOfficer(templateProjects.get(projChoice - 1));
+                }
+
+                case 2 -> {
+                    if (officer.getAppliedProject() == null) {
+                        System.out.println("ERROR: You have not registered for any project as an officer.");
+                    }
+                    else {
+                        viewRegistrationStatus(officer.getAppliedProject());
+                    }
+                }
+
+                case 3 -> {
+                    System.out.println("Feature currently unavailable...");
+                }
+
+                case 4 -> {
+                    eh.replyToEnquiriesOfficer(officer, officer.getAssignedProject(), sc);
+                }
+
+                case 5 -> {
+                    System.out.println("Feature currently unavailable...");
+                }
+
+                case 6 -> {
+                    System.out.println("Feature currently unavailable...");
+                }
+
+                case 7 -> {
+                     officerExit = true;
+                }
+                default -> System.out.println("Invalid selection. Please try again.");
+            }
+        }while (!officerExit);
+} 
+
+
+
 
     public void registerAsOfficer(TemplateProject p) {
         if (p.getPendingOfficers().contains(officer.getName())) {
@@ -180,4 +191,3 @@ public class OfficerPortal extends ApplicantPortal {
     }
 
 }
-
