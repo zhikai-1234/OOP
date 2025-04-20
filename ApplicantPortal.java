@@ -50,8 +50,12 @@ public class ApplicantPortal {
 
 			switch (choice) {
 			
-			case 1 -> {
-				if (applicant.getMaritalStatus().equals("Single")) {
+			case 1 -> { 
+				if(applicant.getEligibilityStatus() == 0) {
+					System.out.println("ERROR: Applicant not eligible for any projects.");
+					return;
+				}
+				else if (applicant.getMaritalStatus().equals("Single")) {
 					for (TemplateProject p : templateProjects) {
 						pm.display2RoomProjectDetails(p);
 					}
