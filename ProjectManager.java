@@ -1,16 +1,15 @@
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class ProjectManager {
 
     private List<TemplateProject> templateProjects; // for viewing
-    private List<LiveProject> liveProjects; // for editing
+    private Map<String, LiveProject> liveProjects; // for editing
 
     // CONSTRUCTOR //
-    public ProjectManager(List<TemplateProject> templateProjects, List<LiveProject> liveProjects) {
+    public ProjectManager(List<TemplateProject> templateProjects, Map<String, LiveProject> liveProjects) {
         this.templateProjects = templateProjects;
         this.liveProjects = liveProjects;
     }
@@ -86,7 +85,7 @@ public class ProjectManager {
         return this.templateProjects;
     }
 
-    public List<LiveProject> getLiveProjects() {
+    public Map<String, LiveProject> getLiveProjects() {
         return this.liveProjects;
     }
 
@@ -95,8 +94,8 @@ public class ProjectManager {
         this.templateProjects = p;
     }
 
-    public void addLiveProject(LiveProject p) {
-        this.liveProjects.add(p);
+    public void addLiveProject(Applicant a, LiveProject p) {
+        this.liveProjects.put(a.getUserID(), p);
     }
 
     // DISPLAY //
@@ -136,6 +135,17 @@ public class ProjectManager {
             System.out.printf("Manager in charge: %s\n", p.getManagerName());
             System.out.println("Approved Officers: " + p.getApprovedOfficers());
             System.out.println("Pending Officers: " + p.getPendingOfficers());
+        }
+    }
+
+    // FOR MANAGER //
+    public void generateReport() {
+        for (Map.Entry<String, LiveProject> liveProj : liveProjects.entrySet()) {
+            Applicant currentApplicant = liveProj.getValue().getApplicant();
+            System.out.printf("\n Applicant Name: %s\n", currentApplicant.getName());
+            System.out.printf("Flat Type: %-Room | Project Name: %s | Age: %d | Marital Status: %s\n", 
+            currentApplicant.getAppliedFlatType(), currentApplicant.getProjApplied().getName(), currentApplicant.getAge(), 
+            currentApplicant.getMaritalStatus());
         }
     }
 }

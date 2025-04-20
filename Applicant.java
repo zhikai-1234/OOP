@@ -1,6 +1,5 @@
 public class Applicant extends User{
     private TemplateProject projApplied;
-    private int appliedType;
     public String applicationStatus;
     private int eligibilityStatus;
     private int appliedFlatType;
@@ -9,7 +8,6 @@ public class Applicant extends User{
     public Applicant(String name, String userID, int age, String maritalStatus) {
         super(name, userID, age, maritalStatus);
         this.projApplied = null;
-        this.appliedType = -1;
         this.applicationStatus = "No Project Applied";
         this.eligibilityStatus = checkEligibility();
         this.appliedFlatType = -1;
@@ -18,7 +16,7 @@ public class Applicant extends User{
     // ELIGIBILITY METHODS //
 
     public int getEligibilityStatus(){
-        return eligibilityStatus;
+        return this.eligibilityStatus;
     }
 
     private int checkEligibility(){
@@ -37,8 +35,8 @@ public class Applicant extends User{
         return this.applicationStatus;
     }
 
-    public int getAppliedType() {
-        return this.appliedType;
+    public int getAppliedFlatType() {
+        return this.appliedFlatType;
     }
 
     public TemplateProject getProjApplied() {
@@ -54,8 +52,8 @@ public class Applicant extends User{
         this.applicationStatus = status;
     }
 
-    public void setAppliedType(int type) {
-        this.appliedType = type;
+    public void setAppliedFlatType(int type) {
+        this.appliedFlatType = type;
     }
 
     public void setProjApplied(TemplateProject proj) {

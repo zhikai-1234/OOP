@@ -7,25 +7,31 @@ public class ManagerPortal {
     private ProjectManager projectManager;
     private ApplicationHandler applicationHandler;
     private EnquiryHandler enquiryHandler;
+    private Scanner sc;
 
     Scanner scanner = new Scanner(System.in);
 
-    public ManagerPortal(Manager manager, ProjectManager projectManager, ApplicationHandler appHandler, EnquiryHandler enquiryHandler) {
+    public ManagerPortal(Manager manager, ProjectManager projectManager, ApplicationHandler appHandler, EnquiryHandler enquiryHandler,
+    Scanner sc) {
         this.manager = manager;
         this.projectManager = projectManager;
         this.applicationHandler = appHandler;
         this.enquiryHandler = enquiryHandler; 
+        this.sc = sc;
     }
 
     public void showManagerOptions() {
         System.out.println("Welcome, Manager: " + manager.getName());
-        System.out.println("1. Create Projects");
-        System.out.println("2. Edit Projects");
-        System.out.println("3. Delete Projects");
-        System.out.println("4. View all Projects");
-        System.out.println("5. View your own Projects");
-        System.out.println("6. Approve Officer Registrations");
-        System.out.println("7. Logout");
+        System.out.println("[1] Create Projects");
+        System.out.println("[2] Edit Projects");
+        System.out.println("[3] Delete Projects");
+        System.out.println("[4] View all Projects");
+        System.out.println("[5] View your own Projects");
+        System.out.println("[6] Approve Officer Registrations");
+        System.out.println("[7] Approve/Reject applications");
+        System.out.println("[8] Approve/reject withdrawal requests");
+        System.out.println("[9] Generate a report of all active bookings");
+        System.out.println("[10] Logout");
         System.out.print("Enter your choice: ");
     }
 
@@ -44,7 +50,10 @@ public class ManagerPortal {
                 case 4 -> viewAllProj();
                 case 5 -> filteredProj();
                 case 6 -> manageOfficerApplications();
-                case 7 -> {
+                case 7 -> applicationHandler.approveApplication(sc);
+                case 8 -> applicationHandler.approveWithdrawals(sc);
+                case 9 -> projectManager.generateReport();
+                case 10 -> {
                     System.out.println("Logging out...");
                     exit = true;
                 }

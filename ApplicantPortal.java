@@ -87,9 +87,9 @@ public class ApplicantPortal {
 				if (applicant.hasBookedFlat() == false) {
 					ah.withdrawApplicationBeforeApproval(applicant);
 				}
-				//else {
-					//ah.withdrawApplicationAfterApproval(applicant);
-				//}
+				else {
+					ah.withdrawApplicationAfterApproval(applicant);
+				}
 			}
 				
 			case 6 -> eh.submitEnquiry(applicant, sc);

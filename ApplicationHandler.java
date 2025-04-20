@@ -8,15 +8,24 @@ public class ApplicationHandler {
     private UserRepository userRepo;
 
     private Map<Applicant, TemplateProject> projectsPendingApproval;
+    private Map<Applicant, TemplateProject> approvedProjects;
+    private Map<Applicant, TemplateProject> rejectedProjects;
     private Map<Applicant, BookingRequest> bookingsPendingApproval;
+    private Map<Applicant, TemplateProject> withdrawalsPendingApproval;
 
 
-    public ApplicationHandler(ProjectManager projManager, UserRepository userRepo, Map<Applicant, TemplateProject> projectsPendingApproval, Map<Applicant, BookingRequest> bookingsPendingApproval) {
+    public ApplicationHandler(ProjectManager projManager, UserRepository userRepo, Map<Applicant, 
+    TemplateProject> projectsPendingApproval, Map<Applicant, TemplateProject> approvedProjects,
+    Map<Applicant, TemplateProject> rejectedProjects, Map<Applicant, BookingRequest> bookingsPendingApproval,
+    Map<Applicant, TemplateProject> withdrawalsPendingApproval) {
         this.pm = projManager;
         this.userRepo = userRepo;
         this.templateProjects = pm.getTemplateProjects();
         this.projectsPendingApproval = projectsPendingApproval;
+        this.approvedProjects = approvedProjects;
+        this.rejectedProjects = rejectedProjects;
         this.bookingsPendingApproval = bookingsPendingApproval;
+        this.withdrawalsPendingApproval = withdrawalsPendingApproval;
     }
 
     public void applyForProject(Applicant a, TemplateProject p, Scanner sc) {
@@ -29,12 +38,12 @@ public class ApplicationHandler {
                 if ((a.getApplicationStatus().equals("No Project Applied")||a.getApplicationStatus().equals("Unsuccessful"))) {
                     this.projectsPendingApproval.put(a, p);
                     a.setProjApplied(p);
-                    a.setAppliedType(1);
+                    a.setAppliedFlatType(1);
                     a.setApplicationStatus("Pending Approval");
                     System.out.println("Success! Application now pending approval...");
                 }
                 else {
-                    if (a.getAppliedType() == 2) {
+                    if (a.getAppliedFlatType() == 2) {
                         System.out.println("ERROR: Applicant not eligible for this type of flat.");
                     }
                     else {
@@ -52,14 +61,14 @@ public class ApplicationHandler {
                     sc.nextLine();
                     if (roomChoice == 1 && p.getNumOfType1() > 0) {
                         this.projectsPendingApproval.put(a, p);
-                        a.setAppliedType(1);
+                        a.setAppliedFlatType(1);
                         a.setProjApplied(p);
                         a.setApplicationStatus("Pending Approval");
                         System.out.println("Success! Application now pending approval...");
                     }
                     else if (roomChoice == 2 && p.getNumOfType2() > 0) {
                         this.projectsPendingApproval.put(a, p);
-                        a.setAppliedType(2);
+                        a.setAppliedFlatType(2);
                         a.setProjApplied(p);
                         a.setApplicationStatus("Pending Approval");
                         System.out.println("Success! Application now pending approval...");
@@ -81,13 +90,25 @@ public class ApplicationHandler {
 
     public void withdrawApplicationBeforeApproval(Applicant a) {
         if (projectsPendingApproval.containsKey(a) && !a.getApplicationStatus().equals("No Project Applied")) {
-            projectsPendingApproval.remove(a);
-            a.setApplicationStatus("No Project Applied");
-            a.setAppliedType(-1);
-            System.out.println("Application successfully withdrawn");
+            withdrawalsPendingApproval.put(a, a.getProjApplied());
+            System.out.println("\nSuccessfully submitted withdrawal request.\n");
         }
         else {
-            System.out.println("ERROR: No project to withdraw from for this user");
+            System.out.println("\nERROR: No project to withdraw from for this user\n");
+        }
+    }
+
+    public void withdrawApplicationAfterApproval(Applicant a) {
+        if (approvedProjects.containsKey(a)) {
+            //approvedProjects.remove(a);
+            //a.setProjApplied(null);
+            //a.setApplicationStatus("No Project Applied");
+            //a.setAppliedFlatType(-1);
+            withdrawalsPendingApproval.put(a, a.getProjApplied());
+            System.out.println("\nSuccessfully submitted withdrawal request.\n");
+        }
+        else {
+            System.out.println("Approved project not found");
         }
     }
 
@@ -105,11 +126,11 @@ public class ApplicationHandler {
             return;
         }
 
-        if(a.getAppliedType() == 1){
+        if(a.getAppliedFlatType() == 1){
                 System.out.println("2-Room: " + p.getNumOfType1());
             }
 
-        else if(a.getAppliedType() == 2){
+        else if(a.getAppliedFlatType() == 2){
             System.out.println("3-Room: " + p.getNumOfType2());
         }
 
@@ -119,7 +140,7 @@ public class ApplicationHandler {
             System.out.println("Booking cancelled.");
         }
         else {
-            submitBookingRequest(a, p, a.getAppliedType());
+            submitBookingRequest(a, p, a.getAppliedFlatType());
         }
         
     }
@@ -133,11 +154,96 @@ public class ApplicationHandler {
         a.setApplicationStatus("Pending Booking Approval");
 	}
 
+    public void approveApplication(Scanner sc) { // FOR MANAGER USE //
+        for (Map.Entry<Applicant, TemplateProject> application : projectsPendingApproval.entrySet()) {
+            System.out.printf("\nApplicant: %s || Applied Project: %s\n", application.getKey().getName(), 
+            application.getValue().getName());
+            if (application.getKey().getAppliedFlatType() == 1) {
+                System.out.printf("Flat Type: %s-Room || Number of flats left: %d\n", 2,
+                application.getValue().getNumOfType1());
+            }
+            else if (application.getKey().getAppliedFlatType() == 2) {
+                System.out.printf("Flat Type: %s-Room || Number of flats left: %d\n", 3,
+                application.getValue().getNumOfType2());
+            }
+        }
+
+        System.out.print("Enter the applicant's name to approve/reject their application: ");
+        String applicantName = sc.nextLine();
+        System.out.println("[A] Approve || [R] Reject");
+        System.out.print("Enter your choice: ");
+        String approval = sc.nextLine().toLowerCase();
+
+        if (approval.equals("a")) {
+            approvedProjects.put(getApplicantFromName(applicantName), getApplicantFromName(applicantName).getProjApplied());
+            getApplicantFromName(applicantName).setApplicationStatus("Successful");
+            System.out.println("Application successfully approved.");
+        }
+
+        else if (approval.equals("r")) {
+            rejectedProjects.put(getApplicantFromName(applicantName), getApplicantFromName(applicantName).getProjApplied());
+            getApplicantFromName(applicantName).setApplicationStatus("Unsuccessful");
+            System.out.println("Application successfully rejected.");
+        }
+    }
+
+    public void approveWithdrawals(Scanner sc) {
+        for (Map.Entry<Applicant, TemplateProject> withdrawal : withdrawalsPendingApproval.entrySet()) {  
+            System.out.println("Withdrawal request from:");
+            System.out.printf("Name: %s || Project Applied: %s || Approval Status: %s\n", withdrawal.getKey().getName(), 
+            withdrawal.getValue().getName(), withdrawal.getKey().getApplicationStatus());
+
+        }
+        System.out.print("Enter the applicant's name to approve/reject their withdrawal: ");
+        String applicantName = sc.nextLine();
+        System.out.println("[A] Approve || [R] Reject");
+        System.out.print("Enter your choice: ");
+        String approval = sc.nextLine().toLowerCase();
+
+        Applicant applicant = getApplicantFromName(applicantName);
+
+        if (applicant == null) {
+            System.out.println("Applicant not found.");
+            return;
+        }
+
+        if (approval.equals("a")) {
+            if (applicant.getApplicationStatus().equals("Successful")) {
+                withdrawalsPendingApproval.remove(applicant);
+                approvedProjects.remove(applicant);
+                applicant.setApplicationStatus("Approved");
+                System.out.println("Withdrawal successfully approved.");
+            } 
+            else if (applicant.getApplicationStatus().equals("Booked")) {
+                System.out.println("Withdrawal auto-rejected as project has already been booked.");
+            }
+        } 
+        else if (approval.equals("r")) {
+            withdrawalsPendingApproval.remove(applicant);
+            System.out.println("Withdrawal successfully rejected.");
+        }
+    }
+
+    public void submitBookingRequest() { // FOR OFFICER USE //
+
+    }
+
+    public Applicant getApplicantFromName(String name) {
+        for (Applicant a : userRepo.getAllApplicants()) {
+            if (a.getName().equals(name)) {
+                return a;
+            }
+        }
+        return null;
+    }
+
+    // GETTERS //
     public void viewAppliedProject(Applicant a) {
         if (projectsPendingApproval.containsKey(a)) {
             System.out.println("Applied project: ");
-            TemplateProject pForDisplay = projectsPendingApproval.get(a);
-            pForDisplay.displayProjectDetails();
+            TemplateProject applicantProject = a.getProjApplied();
+            System.out.printf("Project Name: %s || Project Type: %d-Room\n", applicantProject.getName(), a.getAppliedFlatType() + 1);
+            System.out.println("Application status: " + a.getApplicationStatus());
         }
     }
 

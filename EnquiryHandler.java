@@ -123,4 +123,17 @@ public class EnquiryHandler {
             System.out.println("\nReply submitted successfully.");
         }
     }
+
+    // FOR MANAGER //
+    public void showAllEnquiries() {
+        for (TemplateProject p : pm.getTemplateProjects()) {
+            System.out.println("==============================================");
+            System.out.println("Project name: " + p.getName());
+            int i = 1;
+            for (Enquiry e : p.getEnquiries()) {
+                System.out.printf("[%d] Question: %s | Response: %s", i, e.getEnquiry(), e.getResponse());
+            }
+            System.out.println("==============================================");
+        }
+    }
 }

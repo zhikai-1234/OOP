@@ -168,14 +168,15 @@ public class OfficerPortal extends ApplicantPortal {
             p.getCloseDate(),
             p.getManagerName(),
             p.getNumOfficers(),
-            p.getVisibility()
+            p.getVisibility(),
+            a
         );
 
         // Update unit availability
-        if(flatType == 1 && liveProject.getnType1() > 0) {
-            p.setNumOfType1(liveProject.getnType1() - 1); // keep a record of remaining available flats in the template project
-        } else if(flatType == 2 && liveProject.getnType2() > 0) {
-            p.setNumOfType2(liveProject.getnType2() - 1); // keep a record of remaining available flats in the template project
+        if(flatType == 1 && liveProject.getNumOfType1() > 0) {
+            p.setNumOfType1(liveProject.getNumOfType1() - 1); // keep a record of remaining available flats in the template project
+        } else if(flatType == 2 && liveProject.getNumOfType2() > 0) {
+            p.setNumOfType2(liveProject.getNumOfType2() - 1); // keep a record of remaining available flats in the template project
         } else {
             System.out.println("No units available");
             return;
@@ -187,9 +188,8 @@ public class OfficerPortal extends ApplicantPortal {
         a.setBookedFlat(true);
         
         // Update project manager
-        pm.addLiveProject(liveProject);
+        pm.addLiveProject(a, liveProject);
         
         ah.removeBookingsPendingApproval(a);
     }
-
 }
