@@ -8,13 +8,20 @@ public class OfficerPortal extends ApplicantPortal {
     private ApplicationHandler appHandler;
     private boolean asApplicant;
 
+    private ProjectManager pm;
+    private ApplicationHandler ah;
+    private EnquiryHandler eh;
+
     Scanner sc = new Scanner(System.in);
 
-	public OfficerPortal(Officer o) {
-		super(o);
+	public OfficerPortal(Officer o, ProjectManager pm, ApplicationHandler ah, EnquiryHandler eh) {
+		super(o, pm, ah, eh);
         this.officer = o;
+        this.pm = pm;
+        this.ah = ah;
+        this.eh = eh;
         pm.loadTemplateProjects("ProjectList.csv");
-        this.templateProjects = pm.getTemplateProjects();
+		this.templateProjects = pm.getTemplateProjects();
         this.asApplicant = false; // set default intention to apply as applicant as false
 	}
 
@@ -76,6 +83,7 @@ public class OfficerPortal extends ApplicantPortal {
                     int projChoice = sc.nextInt();
                     sc.nextLine();
                     registerAsOfficer(templateProjects.get(projChoice - 1));
+                    pm.updateTemplateProjects(templateProjects);
                 }
 
                 case 2 -> {
@@ -109,7 +117,7 @@ public class OfficerPortal extends ApplicantPortal {
                 default -> System.out.println("Invalid selection. Please try again.");
             }
         }while (!officerExit);
-} 
+    } 
 
 
 

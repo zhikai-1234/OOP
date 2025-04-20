@@ -6,13 +6,18 @@ import java.util.Scanner;
 
 public class ManagerPortal {
     private Manager manager;
-    private ProjectManager projectManager= new ProjectManager();
+    private ProjectManager projectManager;
+    private EnquiryHandler enquiryHandler;
+    private List<TemplateProject> templateProjects;
     private static Map<Applicant, BookingRequest> bookingsPendingApproval = new HashMap<>();
     Scanner scanner = new Scanner(System.in);
 
-    public ManagerPortal(Manager manager) {
+    public ManagerPortal(Manager manager, ProjectManager projectManager, EnquiryHandler enquiryHandler) {
         this.manager = manager;
+        this.projectManager = projectManager;
+        this.enquiryHandler = enquiryHandler; 
         this.projectManager.loadTemplateProjects("ProjectList.csv");
+        this.templateProjects = projectManager.getTemplateProjects();
     }
 
     public void showManagerOptions() {
@@ -93,7 +98,9 @@ public class ManagerPortal {
 
         TemplateProject project = new TemplateProject(name, neighborhood, type1, nType1, price1, type2, nType2, price2, openDate, closeDate, manager.getName(), numOfficers, visibility);
 
-        projectManager.getTemplateProjects().add(project);
+        templateProjects.add(project);
+
+        projectManager.updateTemplateProjects(templateProjects);
 
         System.out.println("Project successfully created.");
     }

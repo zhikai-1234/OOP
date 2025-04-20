@@ -7,13 +7,16 @@ public class ApplicantPortal {
 	private List<TemplateProject> templateProjects;
 	Scanner sc = new Scanner(System.in);
 
-	ProjectManager pm = new ProjectManager();
-	ApplicationHandler ah = new ApplicationHandler();
-	EnquiryHandler eh = new EnquiryHandler();
+	private ProjectManager pm;
+	private ApplicationHandler ah;
+	private EnquiryHandler eh;
 	
-	public ApplicantPortal(Applicant a) {
-		pm.loadTemplateProjects("ProjectList.csv");
+	public ApplicantPortal(Applicant a, ProjectManager pm, ApplicationHandler ah, EnquiryHandler eh) {
 		this.applicant = a;
+		this.pm = pm;
+		this.ah = ah;
+		this.eh = eh;
+		pm.loadTemplateProjects("ProjectList.csv");
 		this.templateProjects = pm.getTemplateProjects();
 		System.out.println("Number of projects: " + templateProjects.size());
 		System.out.println("Applicant's marital status: " + applicant.getMaritalStatus());

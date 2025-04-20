@@ -7,6 +7,10 @@ public class MainLogin {
         userRepo.loadUsers("ApplicantList.csv", "applicant");
         userRepo.loadUsers("OfficerList.csv", "officer");
         userRepo.loadUsers("ManagerList.csv", "manager");
+
+        ProjectManager pm = new ProjectManager();
+	    ApplicationHandler ah = new ApplicationHandler();
+	    EnquiryHandler eh = new EnquiryHandler();
         
         System.out.println("Total users loaded: " + userRepo.getAllApplicants().size());
         
@@ -24,17 +28,17 @@ public class MainLogin {
             }
 
             else if (user instanceof Officer officer) {
-                OfficerPortal offPortal = new OfficerPortal(officer);
+                OfficerPortal offPortal = new OfficerPortal(officer, pm, ah, eh);
                 offPortal.portal();
             }
 
             else if (user instanceof Applicant applicant) {
-                ApplicantPortal appPortal = new ApplicantPortal(applicant);
+                ApplicantPortal appPortal = new ApplicantPortal(applicant, pm, ah, eh);
                 appPortal.portal();
             }
 
             else if (user instanceof Manager manager) {
-                ManagerPortal manPortal = new ManagerPortal(manager);
+                ManagerPortal manPortal = new ManagerPortal(manager, pm, eh);
                 manPortal.portal();
             }
 

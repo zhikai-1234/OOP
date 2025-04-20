@@ -60,7 +60,7 @@ public class ProjectManager {
                 
              }
              reader.close();
-         } 
+            }
          catch (IOException e) {
              System.out.println("Failed to read project list");
             }
@@ -87,6 +87,9 @@ public class ProjectManager {
     }
 
     // SETTERS //
+    public void updateTemplateProjects(List<TemplateProject> p) {  // use for ANY updates made from the portal to push back to here
+        this.templateProjects = p;
+    }
 
     public void addLiveProject(LiveProject p) {
         this.liveProjects.add(p);
