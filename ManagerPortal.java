@@ -1,7 +1,7 @@
-import java.util.Map;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.ArrayList;
+import java.util.Map;
 import java.util.Scanner;
 
 public class ManagerPortal {
@@ -55,7 +55,7 @@ public class ManagerPortal {
         System.out.print("Enter Project Name: ");
         String name = scanner.nextLine();
 
-        System.out.print("Enter Neighborhood: ");
+        System.out.print("Enter Neighbourhood: ");
         String neighborhood = scanner.nextLine();
 
         System.out.print("Enter Flat Type 1: ");

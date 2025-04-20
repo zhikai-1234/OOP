@@ -26,15 +26,14 @@ public class OfficerPortal extends ApplicantPortal {
 
     public void showOfficerOptions() {
         System.out.println("=================OFFICER OPTIONS=================");
-        System.out.println();
-        System.out.println("=================================================");
-        System.out.println("1. Register to join a project as an officer");
-        System.out.println("2. See officer registration status");
-        System.out.println("3. Apply for another project that you are not handling");
-        System.out.println("4. View/reply to enquiries regarding the project you are handling");
-        System.out.println("5. Officially book a flat for a successful applicant");
-        System.out.println("6. Generate a receipt for an applicant's successful booking");
-        System.out.println("7. Quit");
+        System.out.println("\nWelcome, " + officer.getName() + "\n");
+        System.out.println("[1] Register to join a project as an officer");
+        System.out.println("[2] See officer registration status");
+        System.out.println("[3] Apply for another project that you are not handling");
+        System.out.println("[4] View/reply to enquiries regarding the project you are handling");
+        System.out.println("[5] Officially book a flat for a successful applicant");
+        System.out.println("[6] Generate a receipt for an applicant's successful booking");
+        System.out.println("[7] Exit Officer Menu");
     }
 
     @Override
@@ -44,13 +43,13 @@ public class OfficerPortal extends ApplicantPortal {
             System.out.println("\nAre you logging in as an applicant or an officer today?");
             System.out.println("[1] Applicant");
             System.out.println("[2] Officer");
-            System.out.println("[3] Exit");
+            System.out.println("[3] Log out");
             System.out.print("Enter your choice: ");
             int roleChoice = sc.nextInt();
-            sc.nextLine(); // Consume newline
+            sc.nextLine(); 
 
             switch (roleChoice) {
-                case 1 -> super.portal(); // Applicant menu
+                case 1 -> super.portal(); 
                 case 2 -> handleOfficerActions();
                 case 3 -> exit = true;
                 default -> System.out.println("Invalid choice.");

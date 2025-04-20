@@ -25,14 +25,14 @@ public class ApplicantPortal {
 		System.out.println();
 		System.out.println("=================================================");
 		System.out.println("Welcome, " + applicant.getName());
-		System.out.println("1. View Projects");
-        System.out.println("2. Apply for project");
-        System.out.println("3. View applied project and application status");
-        System.out.println("4. Book a flat (pending successful application)");
-        System.out.println("5. Request a withdrawal from application");
-        System.out.println("6. Submit an enquiry");
-        System.out.println("7. View all enquiries");
-        System.out.println("8. Quit Program");
+		System.out.println("[1] View Projects");
+        System.out.println("[2] Apply for project");
+        System.out.println("[3] View applied project and application status");
+        System.out.println("[4] Book a flat (pending successful application)");
+        System.out.println("[5] Request a withdrawal from application");
+        System.out.println("[6] Submit an enquiry");
+        System.out.println("[7] View all enquiries");
+        System.out.println("[8] Log out");
 		System.out.println("=================================================");
 		System.out.println();
 	}

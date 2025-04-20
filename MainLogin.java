@@ -13,17 +13,17 @@ public class MainLogin {
         Scanner sc = new Scanner(System.in);
         User user = null;
 
-        while (user == null) {
+        boolean quitProgram = false;
+
+        while (!quitProgram) {
+
             user = userRepo.login(userRepo.getAllUsers(), sc);
-            
+
             if (user == null) {
                 System.out.println("Try again.");
             }
-        }
 
-            
-
-            if (user instanceof Officer officer) {
+            else if (user instanceof Officer officer) {
                 OfficerPortal offPortal = new OfficerPortal(officer);
                 offPortal.portal();
             }
@@ -37,6 +37,22 @@ public class MainLogin {
                 ManagerPortal manPortal = new ManagerPortal(manager);
                 manPortal.portal();
             }
+
+            System.out.println("\nSuccessfully logged out!\n");
+            System.out.println("======================");
+            System.out.println("[Any key] Log in again");
+            System.out.println("[E] Exit program");
+            System.out.println("======================");
+            System.out.print("Enter your choice: ");
+            String reLogIn = sc.nextLine().toLowerCase();
+
+            if (reLogIn.equals("e")) {
+                quitProgram = true;
+            }
+            else {
+                System.out.println("\nNew login...\n");
+            }
+        }
     }
 }
 

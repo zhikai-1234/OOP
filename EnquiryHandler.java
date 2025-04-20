@@ -9,33 +9,36 @@ public class EnquiryHandler {
     ProjectManager pm = new ProjectManager();
 
     public EnquiryHandler() {
+        pm.loadTemplateProjects("ProjectList.csv");
         this.templateProjects = pm.getTemplateProjects();
     }
 
     public void submitEnquiry(Applicant a, Scanner sc) {
-    
+        
+        int i = 1;
         for (TemplateProject p : templateProjects) {
-            pm.display2and3RoomProjectDetails(p);
+            System.out.printf("[%d] %s\n", i, p.getName());
+            i++;
         }
-        System.out.print("Enter the project name you want to submit an enquiry for: ");
-        String projectName = sc.nextLine().trim();
+        System.out.print("Enter the number for the project you want to submit an enquiry for: ");
+
+        int projChoice = sc.nextInt();
+        sc.nextLine();
         TemplateProject selectedProject = null;
-        for (TemplateProject p : templateProjects) {
-            if (p.getName().equalsIgnoreCase(projectName)) {
-                selectedProject = p;
-                break;
-            }
-        }
+        selectedProject = templateProjects.get(projChoice - 1);
+
         if (selectedProject == null) {
             System.out.println("Project not found. Please check the name and try again.");
             return;
         }
+
         System.out.print("Enter your enquiry: ");
         String enquiryText = sc.nextLine();
         Enquiry enquiry = new Enquiry(a.getUserID(), selectedProject.getName());
         enquiry.enquireText = enquiryText;
         selectedProject.addEnquiry(enquiry);
         System.out.println("Enquiry submitted successfully!");
+
     }
 
     public void displayAndManageUserEnquiries(Applicant applicant) {
