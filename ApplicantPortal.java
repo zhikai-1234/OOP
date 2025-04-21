@@ -1,4 +1,9 @@
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
+import java.util.Set;
 
 public class ApplicantPortal {
 	
@@ -32,7 +37,8 @@ public class ApplicantPortal {
         System.out.println("[6] Submit an enquiry");
         System.out.println("[7] View all enquiries");
 		System.out.println("[8] Change password");
-        System.out.println("[9] Log out");
+        System.out.println("[9] Change Filter Settings");
+        System.out.println("[10] Log out");
 		System.out.println("=================================================");
 		System.out.println();
 	}
@@ -50,35 +56,64 @@ public class ApplicantPortal {
 
 			switch (choice) {
 			
-			case 1 -> { 
-				if(applicant.getEligibilityStatus() == 0) {
-					System.out.println("ERROR: Applicant not eligible for any projects.");
-					return;
-				}
-				else if (applicant.getMaritalStatus().equals("Single")) {
-					for (TemplateProject p : pm.getTemplateProjects()) {
-						pm.display2RoomProjectDetails(p);
-					}
-				}
-				else if (applicant.getMaritalStatus().equals("Married")) {
-					for (TemplateProject p : pm.getTemplateProjects()) {
-						pm.display2and3RoomProjectDetails(p);
-					}
-				}
+			case 1 -> {
+			    if (applicant.getEligibilityStatus() == 0) {
+			        System.out.println("ERROR: Applicant not eligible for any projects.");
+			        return;
+			    }
+
+			    UserFilter filter = pm.getFilterForUser(applicant.getName());
+			    List<TemplateProject> filtered = filter.filterProjects(pm.getTemplateProjects());
+
+			    if (filtered.isEmpty()) {
+			        System.out.println("No matching projects found with the current filter settings.");
+			    } else {
+			        for (TemplateProject p : filtered) {
+			            if (applicant.getMaritalStatus().equals("Single")) {
+			                pm.display2RoomProjectDetails(p);
+			            } else {
+			                pm.display2and3RoomProjectDetails(p);
+			            }
+			        }
+			    }
 			}
 			
 			case 2 -> {
-				int i = 1;
-				for (TemplateProject p : pm.getTemplateProjects()) {
-					System.out.println();
-					System.out.printf("Project %d\n", i);
-					pm.display2and3RoomProjectDetails(p);
-					i++;
-				}
-				System.out.println("Choose from these projects");
-				int projChoice = sc.nextInt();
-				ah.applyForProject(applicant, pm.getTemplateProjects().get(projChoice - 1), sc);
-				}
+			    if (applicant.getEligibilityStatus() == 0) {
+			        System.out.println("ERROR: Applicant not eligible to apply for projects.");
+			        return;
+			    } 
+
+			    UserFilter filter = pm.getFilterForUser(applicant.getName());
+			    List<TemplateProject> filtered = filter.filterProjects(pm.getTemplateProjects());
+
+			    if (filtered.isEmpty()) {
+			        System.out.println("No matching projects found with the current filter settings.");
+			    } else {
+			        int i = 1;
+			        for (TemplateProject p : filtered) {
+			            System.out.printf("\nProject %d\n", i);
+			            if (applicant.getMaritalStatus().equals("Single")) {
+			                pm.display2RoomProjectDetails(p);
+			            } else {
+			                pm.display2and3RoomProjectDetails(p);
+			            }
+			            i++;
+			        } 
+
+			        System.out.println("Choose a project to apply for:");
+			        Scanner sc = new Scanner(System.in);
+			        int projChoice = sc.nextInt();
+			        sc.nextLine();
+
+			        if (projChoice < 1 || projChoice > filtered.size()) {
+			            System.out.println("Invalid project choice.");
+			        } else {
+			            TemplateProject selectedProject = filtered.get(projChoice - 1);
+			            ah.applyForProject(applicant, selectedProject, sc);
+			        }
+			    }
+			}
 				
 			case 3 -> ah.viewAppliedProject(applicant);
 			
@@ -98,8 +133,17 @@ public class ApplicantPortal {
 			case 7 -> eh.displayAndManageUserEnquiries(applicant);
 
 			case 8 -> changePassword();
-				
-			case 9 -> exit = true;
+			
+			case 9 -> {
+		        if (applicant.getEligibilityStatus() == 0) {
+		            System.out.println("You are not eligible to use project filters.");
+		            return;
+		        }
+		        UserFilter filter = pm.getFilterForUser(applicant.getName());
+		        filter.promptForFilters(applicant.getName(), applicant, pm.getTemplateProjects());
+			}
+			
+			case 10 -> exit = true;
 			
 			default -> System.out.println("Invalid selection. Please try again.");
 			}

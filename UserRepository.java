@@ -1,6 +1,7 @@
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -66,6 +67,17 @@ public class UserRepository {
 
         System.out.println("Invalid login!");
         return null;
+    }
+    
+    public void saveUsersToFile(String filePath, List<? extends User> users) {
+        try (PrintWriter writer = new PrintWriter(filePath)) {
+            writer.println("Name,NRIC,Age,Marital Status,Password");
+            for (User u : users) {
+                writer.println(u.getName() + "," + u.getUserID() + "," + u.getAge() + "," + u.getMaritalStatus() + "," + u.getPassword());
+            }
+        } catch (IOException e) {
+            System.out.println("Error writing user data to " + filePath);
+        }
     }
 
 

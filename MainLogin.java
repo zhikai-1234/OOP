@@ -95,6 +95,11 @@ public class MainLogin {
 
             if (reLogIn.equals("e")) {
                 quitProgram = true;
+                pm.saveTemplateProjectsToFile("ProjectList.csv");
+              
+                userRepo.saveUsersToFile("ApplicantList.csv", userRepo.getAllApplicants());
+                userRepo.saveUsersToFile("OfficerList.csv", userRepo.getAllOfficers());
+                userRepo.saveUsersToFile("ManagerList.csv", userRepo.getAllManagers());
             }
             else {
                 System.out.println("\nNew login...\n");

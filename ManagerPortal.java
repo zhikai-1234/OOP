@@ -8,6 +8,7 @@ public class ManagerPortal {
     private ApplicationHandler applicationHandler;
     private EnquiryHandler enquiryHandler;
     private Scanner sc;
+    private UserFilter managerFilter = new UserFilter();
 
     Scanner scanner = new Scanner(System.in);
 
@@ -33,7 +34,8 @@ public class ManagerPortal {
         System.out.println("[9] Generate a report of all active bookings");
         System.out.println("[10] Reply to enquiries that pertain to your project");
         System.out.println("[11] Change password");
-        System.out.println("[12] Logout");
+        System.out.println("[12] Change Filter Settings");
+        System.out.println("[13] Logout");
         System.out.print("Enter your choice: ");
     }
 
@@ -57,7 +59,8 @@ public class ManagerPortal {
                 case 9 -> projectManager.generateReport();
                 case 10 -> enquiryHandler.replyToEnquiriesManager(manager, manager.getProjectInCharge(), sc);
                 case 11 -> changePassword();
-                case 12 -> {
+                case 12 -> managerFilter.promptForFilters(manager.getName(), manager, projectManager.getTemplateProjects());
+                case 13 -> {
                     System.out.println("Logging out...");
                     exit = true;
                 }
@@ -240,14 +243,14 @@ public class ManagerPortal {
     }
 
     public void viewAllProj() {
-        List<TemplateProject> templates = projectManager.getTemplateProjects();
+        List<TemplateProject> templates = managerFilter.filterProjects(projectManager.getTemplateProjects());
 
         if (templates.isEmpty()) {
             System.out.println("No projects available.");
             return;
         }
 
-        System.out.println("=== ALL PROJECTS ===");
+        System.out.println("=== ALL PROJECTS (Filtered) ===");
         for (TemplateProject p : templates) {
             p.displayProjectDetails();
             System.out.println(); 
@@ -261,16 +264,22 @@ public class ManagerPortal {
         for (TemplateProject p : all) {
             if (p.getManagerName().equalsIgnoreCase(manager.getName())) {
                 filtered.add(p);
+            }
+        }
+
+        List<TemplateProject> result = managerFilter.filterProjects(filtered); // Apply filter
+
+        if (result.isEmpty()) {
+            System.out.println("No managed projects match the current filter.");
+        } else {
+            for (TemplateProject p : result) {
                 p.displayProjectDetails();
             }
         }
 
-        if (filtered.isEmpty()) {
-            System.out.println("No managed projects.");
-        }
-
-        return filtered;
+        return result;
     }
+
 
     public void manageOfficerApplications() {
         // SEARCH FOR PROJECT THAT MANAGER IS IN CHARGE OF //

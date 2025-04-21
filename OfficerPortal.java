@@ -38,7 +38,8 @@ public class OfficerPortal extends ApplicantPortal {
         System.out.println("[5] Officially book a flat for a successful applicant");
         System.out.println("[6] Generate a receipt for an applicant's successful booking");
         System.out.println("[7] Change password");
-        System.out.println("[8] Exit Officer Menu");
+        System.out.println("[8] Change Filter Settings");
+        System.out.println("[9] Exit Officer Menu");
     }
 
     @Override
@@ -71,17 +72,31 @@ public class OfficerPortal extends ApplicantPortal {
             sc.nextLine();
             switch(choice) {
 
-                case 1 -> {
+            case 1 -> {
+                UserFilter filter = pm.getFilterForUser(officer.getName());
+                List<TemplateProject> filtered = filter.filterProjects(pm.getTemplateProjects());
+
+                if (filtered.isEmpty()) {
+                    System.out.println("No matching projects found with the current filter settings.");
+                } else {
                     int i = 1;
-                    for (TemplateProject p : pm.getTemplateProjects()) {
+                    for (TemplateProject p : filtered) {
                         System.out.printf("Project %d\n", i);
                         pm.display2and3RoomProjectDetails(p);
+                        i++;
                     }
+
                     System.out.print("Enter number of project you wish to register for: ");
                     int projChoice = sc.nextInt();
                     sc.nextLine();
-                    registerAsOfficer(pm.getTemplateProjects().get(projChoice - 1));
+
+                    if (projChoice < 1 || projChoice > filtered.size()) {
+                        System.out.println("Invalid project choice.");
+                    } else {
+                        registerAsOfficer(filtered.get(projChoice - 1));
+                    }
                 }
+            }
 
                 case 2 -> {
                     if (officer.getAppliedProjectAsOfficer() == null) {
@@ -110,8 +125,13 @@ public class OfficerPortal extends ApplicantPortal {
                 }
 
                 case 7 -> changePassword();
-
+                
                 case 8 -> {
+                    UserFilter filter = pm.getFilterForUser(officer.getName());
+                    filter.promptForFilters(officer.getName(), officer, pm.getTemplateProjects());
+                }
+
+                case 9 -> {
                      officerExit = true;
                 }
                 default -> System.out.println("Invalid selection. Please try again.");
