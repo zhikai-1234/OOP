@@ -1,0 +1,114 @@
+@startuml
+title HDB Officer's Role - BTO Application and Project Management Flow
+
+actor "Officer" as user
+participant "MainLogin" as mainLogin
+participant "UserRepository" as userRepo
+participant "OfficerPortal" as portal
+participant "ProjectManager" as projManager
+participant "ApplicationHandler" as appHandler
+participant "EnquiryHandler" as enquiryHandler
+participant "TemplateProject" as project
+participant "ManagerPortal" as managerPortal
+actor "Manager" as manager
+
+' === Initial Login Process ===
+user -> mainLogin: Login with credentials
+mainLogin -> userRepo: login(users, scanner)
+userRepo --> mainLogin: return Officer object
+mainLogin -> portal: create OfficerPortal(officer, pm, ah, eh)
+portal --> user: Display officer options
+
+' === BTO Application Flow ===
+group Apply for BTO as Applicant
+    user -> portal: Select "Apply for BTO"
+
+    ' View available projects
+    portal -> projManager: getTemplateProjects()
+    projManager --> portal: return list of available projects
+    portal --> user: Display eligible projects
+
+    ' Select project and apply
+    user -> portal: Select project and flat type
+    portal -> appHandler: applyForProject(officer, selectedProject, scanner)
+
+    ' Process application
+    appHandler -> project: Check availability
+    project --> appHandler: return availability status
+
+    alt Project available
+        appHandler -> user: setProjApplied(selectedProject)
+        appHandler -> user: setApplicationStatus("Pending Approval")
+        appHandler -> user: setAppliedFlatType(selectedType)
+        appHandler -> appHandler: projectsPendingApproval.put(officer, project)
+        appHandler --> portal: return success status
+        portal --> user: Display application confirmation
+    else Project not available
+        appHandler --> portal: return error message
+        portal --> user: Display error message
+    end
+end
+
+' === Project Handling Registration Flow ===
+group Register to Handle Project as Officer
+    user -> portal: Select "Apply as project officer"
+
+    ' View and select project
+    portal -> projManager: getTemplateProjects()
+    projManager --> portal: return list of projects
+    portal --> user: Display available projects
+
+    ' Apply as officer
+    user -> portal: Select project
+    portal -> portal: applyAsOfficer()
+    portal -> user: setAppliedProjectAsOfficer(selectedProject)
+    portal -> project: Add to pendingOfficers list
+    project --> portal: return confirmation
+    portal --> user: Display application confirmation
+end
+
+' === Manager Approval Flow ===
+group Manager Approval Process
+    note over managerPortal: Manager logs in later
+
+    ' Manager reviews applications
+    manager -> managerPortal: approveOfficerApplications()
+    managerPortal -> project: getPendingOfficers()
+    project --> managerPortal: return list of pending officers
+    managerPortal --> manager: Display pending officers
+
+    ' Manager approves officer
+    manager -> managerPortal: Approve officer
+    managerPortal -> project: Move officer to approvedOfficers list
+    project --> managerPortal: confirmation
+
+    ' Update officer status
+    managerPortal -> userRepo: getOfficerByUserID(officerID)
+    userRepo --> managerPortal: return Officer object
+    managerPortal -> user: setAssignedProjectAsOfficer(project)
+    managerPortal --> manager: Display approval confirmation
+end
+
+' === Officer Project Handling Activities ===
+group Project Handling by Officer
+    ' Check assignment status
+    user -> portal: View assigned projects
+    portal -> user: getAssignedProjectAsOfficer()
+    user --> portal: return assigned project
+    portal --> user: Display project details
+
+    ' Handle project enquiries
+    user -> portal: Select "Handle Enquiries"
+    portal -> enquiryHandler: replyToEnquiriesOfficer(officer, assignedProject, scanner)
+    enquiryHandler -> project: getEnquiries()
+    project --> enquiryHandler: return enquiries
+    enquiryHandler --> user: Display enquiries
+
+    ' Respond to enquiry
+    user -> enquiryHandler: Select enquiry and provide response
+    enquiryHandler -> project: Update enquiry response
+    project --> enquiryHandler: confirmation
+    enquiryHandler --> user: Display success message
+end
+
+@enduml

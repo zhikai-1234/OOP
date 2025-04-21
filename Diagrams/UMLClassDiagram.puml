@@ -1,0 +1,344 @@
+@startuml
+left to right direction
+skinparam classAttributeIconSize 0
+skinparam classFontSize 12
+skinparam packageTitleFontSize 16
+
+' === FILTER PACKAGE ===
+package "filter" {
+    class UserFilter {
+        - String locationFilter
+        - Set<String> flatTypeFilters
+        - double minPrice
+        - double maxPrice
+        - LocalDate applicationDateFilter
+        --
+        + String getLocationFilter()
+        + Set<String> getFlatTypeFilters()
+        + double getMinPrice()
+        + double getMaxPrice()
+        + LocalDate getApplicationDateFilter()
+        + void setLocationFilter(String)
+        + void setFlatTypeFilters(Set<String>)
+        + void setMinPrice(double)
+        + void setMaxPrice(double)
+        + void setApplicationDateFilter(LocalDate)
+        + List<TemplateProject> filterProjects(List<TemplateProject>)
+        + void promptForFilters(String, User, List<TemplateProject>)
+        + String toString()
+    }
+}
+
+' === SUPPORT PACKAGE ===
+package "support" {
+    class UserRepository {
+        - List<User> users
+        --
+        + void loadUsers(String, String)
+        + <T extends User> T login(List<T>, Scanner)
+        + List<Applicant> getAllApplicants()
+        + List<Officer> getAllOfficers()
+        + List<Manager> getAllManagers()
+        + Applicant getApplicantByUserID(String)
+        + Officer getOfficerByUserID(String)
+        + Manager getManagerByUserID(String)
+        + List<User> getAllUsers()
+    }
+}
+
+' === DATA PACKAGE ===
+package "data" {
+    class Enquiry {
+        + String enquireText
+        + String enquiryResponse
+        + String editChoice
+        + String userID
+        + String projectName
+        --
+        + Enquiry(String, String)
+        + String getEnquiry()
+        + String getResponse()
+        + String getUserID()
+        + String getProjectName()
+        + void setResponse(String)
+    }
+    class BookingRequest {
+        - Applicant applicant
+        - TemplateProject templateProject
+        - int flatType
+        - boolean approval
+        --
+        + BookingRequest(Applicant, TemplateProject, int)
+        + Applicant getApplicant()
+        + TemplateProject getTemplateProject()
+        + int getFlatType()
+        + void approveBooking()
+    }
+}
+
+' === DOMAIN PACKAGE ===
+package "domain" {
+    abstract class User {
+        - String name
+        - String UserID
+        - String password
+        - String maritalStatus
+        - int age
+        --
+        + User(String, String, int, String)
+        + String getName()
+        + String getUserID()
+        + String getPassword()
+        + int getAge()
+        + String getMaritalStatus()
+        + void changePassword(String)
+    }
+    class Applicant {
+        - TemplateProject projApplied
+        - String applicationStatus
+        - int eligibilityStatus
+        - int appliedFlatType
+        - boolean hasBookedFlat
+        - int bookedFlatType
+        --
+        + Applicant(String, String, int, String)
+        + int getEligibilityStatus()
+        - int checkEligibility()
+        + String getApplicationStatus()
+        + int getAppliedFlatType()
+        + int getBookedFlatType()
+        + TemplateProject getProjApplied()
+        + boolean hasBookedFlat()
+        + void setApplicationStatus(String)
+        + void setAppliedFlatType(int)
+        + void setBookedFlatType(int)
+        + void setProjApplied(TemplateProject)
+        + void setBookedFlat(boolean)
+    }
+    class Officer {
+        - TemplateProject appliedProjectAsOfficer
+        - TemplateProject assignedProjectAsOfficer
+        --
+        + Officer(String, String, int, String)
+        + TemplateProject getAppliedProjectAsOfficer()
+        + TemplateProject getAssignedProjectAsOfficer()
+        + void setAppliedProjectAsOfficer(TemplateProject)
+        + void setAssignedProjectAsOfficer(TemplateProject)
+        + void setProjApplied(TemplateProject)
+    }
+    class Manager {
+        - TemplateProject projectInCharge
+        --
+        + Manager(String, String, int, String)
+        + TemplateProject getProjectInCharge()
+        + void setProjectInCharge(TemplateProject)
+    }
+    class TemplateProject {
+        - String name
+        - String neighbourhood
+        - String type1
+        - int nType1
+        - double type1price
+        - String type2
+        - int nType2
+        - double type2price
+        - String openDate
+        - String closeDate
+        - String managerName
+        - int nOfficers
+        - List<String> pendingOfficers
+        - List<String> approvedOfficers
+        - boolean visibility
+        - List<Enquiry> enquiries
+        --
+        + TemplateProject(String, String, String, int, double, String, int, double, String, String, String, int, boolean)
+        + String getName()
+        + String getNeighbourhood()
+        + String getType1()
+        + int getNumOfType1()
+        + double getType1Price()
+        + String getType2()
+        + int getNumOfType2()
+        + double getType2Price()
+        + String getOpenDate()
+        + String getCloseDate()
+        + String getManagerName()
+        + int getNumOfficers()
+        + int getRemainingOfficerSlots()
+        + boolean getVisibility()
+        + List<Enquiry> getEnquiries()
+        + List<String> getPendingOfficers()
+        + List<String> getApprovedOfficers()
+        + void setNumOfType1(int)
+        + void setNumOfType2(int)
+        + void addEnquiry(Enquiry)
+        + void setPendingOfficers(List<String>)
+        + void setApprovedOfficers(List<String>)
+        + void setName(String)
+        + void setNeighbourhood(String)
+        + void setType1(String)
+        + void setType1Price(double)
+        + void setType2(String)
+        + void setType2Price(double)
+        + void setOpenDate(String)
+        + void setCloseDate(String)
+        + void setManagerName(String)
+        + void setNumOfficers(int)
+        + void setVisibility(boolean)
+        + void displayProjectDetails()
+    }
+    class LiveProject {
+        - boolean visibility
+        - Applicant applicant
+        --
+        + LiveProject(String, String, String, int, double, String, int, double, String, String, String, int, boolean, Applicant)
+        + void toggleVisibility()
+        + Applicant getApplicant()
+    }
+
+    User <|-- Applicant
+    Applicant <|-- Officer
+    User <|-- Manager
+    TemplateProject <|-- LiveProject
+}
+
+' === PORTAL PACKAGE ===
+package "portal" {
+    class ApplicantPortal {
+        - Applicant applicant
+        - Scanner sc
+        - ProjectManager pm
+        - ApplicationHandler ah
+        - EnquiryHandler eh
+        --
+        + ApplicantPortal(Applicant, ProjectManager, ApplicationHandler, EnquiryHandler)
+        + void showOptions()
+        + void portal()
+        + void viewProjects(Applicant)
+        + void changePassword()
+    }
+    class OfficerPortal {
+        - Officer officer
+        - Scanner sc
+        - ProjectManager pm
+        - ApplicationHandler ah
+        - EnquiryHandler eh
+        --
+        + OfficerPortal(Officer, ProjectManager, ApplicationHandler, EnquiryHandler)
+        + void showOfficerOptions()
+        + void portal()
+        + void applyAsOfficer()
+    }
+    class ManagerPortal {
+        - Manager manager
+        - Scanner sc
+        - ProjectManager pm
+        - ApplicationHandler ah
+        - EnquiryHandler eh
+        --
+        + ManagerPortal(Manager, ProjectManager, ApplicationHandler, EnquiryHandler, Scanner)
+        + void showManagerOptions()
+        + void portal()
+        + void createProj()
+        + void editProj()
+        + void deleteProj()
+        + void approveOfficerApplications()
+    }
+}
+
+' === SERVICE PACKAGE ===
+package "service" {
+    class ApplicationHandler {
+        - ProjectManager pm
+        - UserRepository ur
+        - Map<Applicant, TemplateProject> projectsPendingApproval
+        - Map<Applicant, TemplateProject> approvedProjects
+        - Map<Applicant, TemplateProject> rejectedProjects
+        - Map<Applicant, BookingRequest> bookingsPendingApproval
+        - Map<Applicant, TemplateProject> withdrawalsPendingApproval
+        --
+        + ApplicationHandler(ProjectManager, UserRepository, Map, Map, Map, Map, Map)
+        + void applyForProject(Applicant, TemplateProject, Scanner)
+        + void viewAppliedProject(Applicant)
+        + void bookFlat(Applicant, Scanner)
+        + void withdrawApplicationBeforeApproval(Applicant)
+        + void withdrawApplicationAfterApproval(Applicant)
+        + void approveApplication(Manager)
+        + void rejectApplication(Manager)
+        + void approveBooking(Manager)
+        + void approveWithdrawal(Manager)
+    }
+    class EnquiryHandler {
+        - ProjectManager pm
+        --
+        + EnquiryHandler(ProjectManager)
+        + void submitEnquiry(Applicant, Scanner)
+        + void displayAndManageUserEnquiries(Applicant)
+        + void replyToEnquiriesOfficer(Officer, TemplateProject, Scanner)
+        + void showAllEnquiries()
+        + void replyToEnquiriesManager(Manager, TemplateProject, Scanner)
+    }
+    class ProjectManager {
+        - List<TemplateProject> templateProjects
+        - Map<String, LiveProject> liveProjects
+        --
+        + ProjectManager(List<TemplateProject>, Map<String, LiveProject>)
+        + void loadTemplateProjects(String)
+        + List<TemplateProject> getTemplateProjects()
+        + Map<String, LiveProject> getLiveProjects()
+        + void updateTemplateProjects(List<TemplateProject>)
+        + void addLiveProject(Applicant, LiveProject)
+        + void display2RoomProjectDetails(TemplateProject)
+        + void display2and3RoomProjectDetails(TemplateProject)
+        + void generateReport()
+        + LiveProject convertTemplateToLive(Applicant, TemplateProject)
+    }
+}
+
+' === MAIN PACKAGE ===
+package "main" {
+    class MainLogin {
+        + static void main(String[] args)
+    }
+}
+
+' --- ASSOCIATIONS AND MULTIPLICITIES ---
+
+support.UserRepository "1" o-- "0..*" domain.User : contains
+domain.Applicant "0..1" o-- "0..1" domain.TemplateProject : applies to
+domain.Officer "0..1" o-- "0..1" domain.TemplateProject : applies as officer
+domain.Officer "0..1" o-- "0..1" domain.TemplateProject : is assigned to
+domain.Manager "1" o-- "0..1" domain.TemplateProject : in charge of
+domain.TemplateProject "1" o-- "0..*" data.Enquiry : contains
+data.BookingRequest "1" o-- "1" domain.Applicant : is for
+data.BookingRequest "1" o-- "1" domain.TemplateProject : books from
+domain.LiveProject "1" o-- "1" domain.Applicant : contains
+service.ProjectManager "1" o-- "0..*" domain.TemplateProject : manages
+service.ProjectManager "1" o-- "0..*" domain.LiveProject : manages
+
+filter.UserFilter "1" ..> "0..*" domain.TemplateProject : filters
+filter.UserFilter "1" ..> "1" domain.User : uses
+filter.UserFilter "1" ..> "0..*" domain.TemplateProject : promptForFilters
+
+portal.ApplicantPortal "1" --> "1" domain.Applicant : provides interface for
+portal.ApplicantPortal "1" --> "1" service.ProjectManager : uses
+portal.ApplicantPortal "1" --> "1" service.ApplicationHandler : uses
+portal.ApplicantPortal "1" --> "1" service.EnquiryHandler : uses
+portal.OfficerPortal "1" --> "1" domain.Officer : provides interface for
+portal.OfficerPortal "1" --> "1" service.ProjectManager : uses
+portal.OfficerPortal "1" --> "1" service.ApplicationHandler : uses
+portal.OfficerPortal "1" --> "1" service.EnquiryHandler : uses
+portal.ManagerPortal "1" --> "1" domain.Manager : provides interface for
+portal.ManagerPortal "1" --> "1" service.ProjectManager : uses
+portal.ManagerPortal "1" --> "1" service.ApplicationHandler : uses
+portal.ManagerPortal "1" --> "1" service.EnquiryHandler : uses
+
+main.MainLogin --> support.UserRepository : initializes
+main.MainLogin --> service.ProjectManager : initializes
+main.MainLogin --> service.ApplicationHandler : initializes
+main.MainLogin --> service.EnquiryHandler : initializes
+main.MainLogin --> portal.ApplicantPortal : creates
+main.MainLogin --> portal.OfficerPortal : creates
+main.MainLogin --> portal.ManagerPortal : creates
+
+@enduml
