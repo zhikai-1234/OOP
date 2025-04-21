@@ -69,6 +69,24 @@ public class UserRepository {
         return null;
     }
     
+    
+    public void saveAllUsers() {
+        List<Applicant> applicants = new ArrayList<>();
+        List<Officer> officers = new ArrayList<>();
+        List<Manager> managers = new ArrayList<>();
+
+        for (User u : users) {
+            if (u instanceof Officer o) officers.add(o);
+            else if (u instanceof Manager m) managers.add(m);
+            else if (u instanceof Applicant a && !(u instanceof Officer)) applicants.add(a); 
+ 
+        }
+
+        saveUsersToFile("ApplicantList.csv", applicants);
+        saveUsersToFile("OfficerList.csv", officers);
+        saveUsersToFile("ManagerList.csv", managers);
+    }
+    
     public void saveUsersToFile(String filePath, List<? extends User> users) {
         try (PrintWriter writer = new PrintWriter(filePath)) {
             writer.println("Name,NRIC,Age,Marital Status,Password");
