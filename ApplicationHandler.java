@@ -112,7 +112,7 @@ public class ApplicationHandler {
         }
     }
 
-
+    // FOR OFFICER //
     public void bookFlat(Applicant a, Scanner sc){
         if(!"Approved".equals(a.getApplicationStatus())){
             System.out.println("ERROR: Applicant not approved for any project.");
@@ -154,7 +154,34 @@ public class ApplicationHandler {
         a.setApplicationStatus("Pending Booking Approval");
 	}
 
-    public void approveApplication(Scanner sc) { // FOR MANAGER USE //
+    public Applicant getApplicantFromName(String name) {
+        for (Applicant a : userRepo.getAllApplicants()) {
+            if (a.getName().equals(name)) {
+                return a;
+            }
+        }
+        return null;
+    }
+
+    public Applicant getApplicantFromNRIC(String nric) {
+        for (Applicant a : userRepo.getAllApplicants()) {
+            if (a.getUserID().equals(nric)) {
+                return a;
+            }
+        }
+        return null;
+    }
+
+    public Map.Entry<Applicant, TemplateProject> retrieveApplicationWithNRIC(String nric) {
+        Applicant a = getApplicantFromNRIC(nric);
+        if (approvedProjects.containsKey(a)) {
+            return Map.entry(a, approvedProjects.get(a));
+        }
+        return null; 
+    }
+    
+    // FOR MANAGER //
+    public void approveApplication(Scanner sc) { 
         for (Map.Entry<Applicant, TemplateProject> application : projectsPendingApproval.entrySet()) {
             System.out.printf("\nApplicant: %s || Applied Project: %s\n", application.getKey().getName(), 
             application.getValue().getName());
@@ -189,7 +216,7 @@ public class ApplicationHandler {
 
     public void approveWithdrawals(Scanner sc) {
         for (Map.Entry<Applicant, TemplateProject> withdrawal : withdrawalsPendingApproval.entrySet()) {  
-            System.out.println("Withdrawal request from:");
+            System.out.println("\nWithdrawal request from:");
             System.out.printf("Name: %s || Project Applied: %s || Approval Status: %s\n", withdrawal.getKey().getName(), 
             withdrawal.getValue().getName(), withdrawal.getKey().getApplicationStatus());
 
@@ -224,17 +251,29 @@ public class ApplicationHandler {
         }
     }
 
-    public void submitBookingRequest() { // FOR OFFICER USE //
-
+    public void displayAllBookings() {
+        for (Map.Entry<Applicant, BookingRequest> booking : bookingsPendingApproval.entrySet()) {
+            System.out.println("\nBooking request from:");
+            System.out.printf("Name: %s || Project Applied: %s || Room Type: %d-Room\n", booking.getKey().getName(), 
+            booking.getKey().getProjApplied().getName(), booking.getKey().getAppliedFlatType() + 1);
+        }
     }
 
-    public Applicant getApplicantFromName(String name) {
-        for (Applicant a : userRepo.getAllApplicants()) {
-            if (a.getName().equals(name)) {
-                return a;
-            }
+    public void approveBooking(BookingRequest b, Scanner sc) {
+        displayAllBookings();
+        System.out.print("Enter the name of the applicant to approve/reject their booking: ");
+        String applicantName = sc.nextLine();
+        Applicant applicant = getApplicantFromName(applicantName);
+        System.out.print("[A] Approve | [R] Reject: ");
+        String choice = sc.nextLine();
+        if (choice.equalsIgnoreCase("a")) {
+            b.approveBooking();
+            System.out.println("\nBooking successfully approved.\n");
+        }   
+        else if (choice.equalsIgnoreCase("r")) {
+            bookingsPendingApproval.remove(applicant);
+            System.out.println("\nBooking successfully rejected.\n");
         }
-        return null;
     }
 
     // GETTERS //

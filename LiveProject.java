@@ -2,7 +2,7 @@
 public class LiveProject extends TemplateProject {
 
     // DEFAULT ATTRIBUTES //
-    private String name;
+    /* private String name;
     private String neighbourhood;
     private String type1;
     private int type1price;
@@ -11,7 +11,7 @@ public class LiveProject extends TemplateProject {
     private String openDate;
     private String closeDate;
     private String managerName;
-    private int noOfOfficers;
+    private int noOfOfficers; */
     private boolean visibility;
 
     // USER ATTRIBUTES //

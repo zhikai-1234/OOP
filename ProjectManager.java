@@ -148,4 +148,11 @@ public class ProjectManager {
             currentApplicant.getMaritalStatus());
         }
     }
+
+    public LiveProject convertTemplateToLive(Applicant a, TemplateProject t) {
+        LiveProject l = new LiveProject(t.getName(), t.getNeighbourhood(), t.getType1(), t.getNumOfType1(), t.getType1Price(), 
+        t.getType2(), t.getNumOfType2(), t.getType2Price(), t.getOpenDate(), t.getCloseDate(), t.getManagerName(), t.getNumOfficers(), 
+        t.getVisibility(), a);
+        return l;
+    }
 }

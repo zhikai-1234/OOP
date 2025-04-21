@@ -3,7 +3,8 @@ public class Applicant extends User{
     public String applicationStatus;
     private int eligibilityStatus;
     private int appliedFlatType;
-    private boolean hasBookedFlat = false;
+    private boolean hasBookedFlat;
+    private int bookedFlatType;
 
     public Applicant(String name, String userID, int age, String maritalStatus) {
         super(name, userID, age, maritalStatus);
@@ -11,6 +12,8 @@ public class Applicant extends User{
         this.applicationStatus = "No Project Applied";
         this.eligibilityStatus = checkEligibility();
         this.appliedFlatType = -1;
+        this.hasBookedFlat = false;
+        this.bookedFlatType = -1;
     }
 
     // ELIGIBILITY METHODS //
@@ -39,6 +42,10 @@ public class Applicant extends User{
         return this.appliedFlatType;
     }
 
+    public int getBookedFlatType() {
+        return this.bookedFlatType;
+    }
+
     public TemplateProject getProjApplied() {
         return this.projApplied;
     }
@@ -54,6 +61,10 @@ public class Applicant extends User{
 
     public void setAppliedFlatType(int type) {
         this.appliedFlatType = type;
+    }
+
+    public void setBookedFlatType(int type) {
+        this.bookedFlatType = type;
     }
 
     public void setProjApplied(TemplateProject proj) {

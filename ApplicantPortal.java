@@ -31,7 +31,8 @@ public class ApplicantPortal {
         System.out.println("[5] Request a withdrawal from application");
         System.out.println("[6] Submit an enquiry");
         System.out.println("[7] View all enquiries");
-        System.out.println("[8] Log out");
+		System.out.println("[8] Change password");
+        System.out.println("[9] Log out");
 		System.out.println("=================================================");
 		System.out.println();
 	}
@@ -95,8 +96,10 @@ public class ApplicantPortal {
 			case 6 -> eh.submitEnquiry(applicant, sc);
 				
 			case 7 -> eh.displayAndManageUserEnquiries(applicant);
+
+			case 8 -> changePassword();
 				
-			case 8 -> exit = true;
+			case 9 -> exit = true;
 			
 			default -> System.out.println("Invalid selection. Please try again.");
 			}
@@ -133,5 +136,30 @@ public class ApplicantPortal {
 			}	
     	}
 	}
+
+	public void changePassword() {
+        boolean exit = false;
+        while (!exit) {
+            System.out.println("At any point, input [0] to exit.");
+            System.out.print("Enter new password: ");
+            String firstEntry = sc.nextLine();
+            if (firstEntry.equals("0")) {
+                break;
+            }
+            System.out.print("Enter new password again: ");
+            String secondEntry = sc.nextLine();
+            if (secondEntry.equals("0")) {
+                break;
+            }
+            else if (!(firstEntry.equals(secondEntry))) {
+                System.out.println("ERROR: passwords do not match. Try again.");
+            }
+            else if (firstEntry.equals(secondEntry)) {
+                applicant.changePassword(secondEntry);
+                System.out.println("\nPassword successfully changed!\n");
+                exit = true;
+            }
+        }
+    }
 }
 	

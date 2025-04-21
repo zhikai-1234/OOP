@@ -31,7 +31,9 @@ public class ManagerPortal {
         System.out.println("[7] Approve/Reject applications");
         System.out.println("[8] Approve/reject withdrawal requests");
         System.out.println("[9] Generate a report of all active bookings");
-        System.out.println("[10] Logout");
+        System.out.println("[10] Reply to enquiries that pertain to your project");
+        System.out.println("[11] Change password");
+        System.out.println("[12] Logout");
         System.out.print("Enter your choice: ");
     }
 
@@ -53,7 +55,9 @@ public class ManagerPortal {
                 case 7 -> applicationHandler.approveApplication(sc);
                 case 8 -> applicationHandler.approveWithdrawals(sc);
                 case 9 -> projectManager.generateReport();
-                case 10 -> {
+                case 10 -> enquiryHandler.replyToEnquiriesManager(manager, manager.getProjectInCharge(), sc);
+                case 11 -> changePassword();
+                case 12 -> {
                     System.out.println("Logging out...");
                     exit = true;
                 }
@@ -105,6 +109,8 @@ public class ManagerPortal {
         TemplateProject project = new TemplateProject(name, neighborhood, type1, nType1, price1, type2, nType2, price2, openDate, closeDate, manager.getName(), numOfficers, visibility);
 
         projectManager.getTemplateProjects().add(project);
+
+        manager.setProjectInCharge(project); // sets manager to be in charge of their own project
 
         System.out.println("Project successfully created.");
     }
@@ -267,75 +273,62 @@ public class ManagerPortal {
     }
 
     public void manageOfficerApplications() {
-        List<TemplateProject> myProjects = filteredProj();
-
-        if (myProjects.isEmpty()) return;
-
-        System.out.println("Select a project to review officer applications:");
-        for (int i = 0; i < myProjects.size(); i++) {
-            System.out.println((i + 1) + ") " + myProjects.get(i).getName());
-        }
-
-        int projChoice = scanner.nextInt();
-        scanner.nextLine();
-
-        if (projChoice < 1 || projChoice > myProjects.size()) return;
-
-        TemplateProject selectedProject = myProjects.get(projChoice - 1);
-        List<String> pending = selectedProject.getPendingOfficers();
-
-        if (pending.isEmpty()) {
-            System.out.println("No pending officers.");
-            return;
-        }
-
-        while (true) {
-            System.out.println("\nPending Officers:");
-            for (int i = 0; i < pending.size(); i++) {
-                System.out.println((i + 1) + ") " + pending.get(i));
-            }
-
-            System.out.print("Enter officer number to review (0 to exit): ");
-            int officerChoice = scanner.nextInt();
-            scanner.nextLine();
-
-            if (officerChoice == 0) break;
-            if (officerChoice < 1 || officerChoice > pending.size()) {
-                System.out.println("Invalid selection.");
-                continue;
-            }
-
-            String officerName = pending.get(officerChoice - 1);
-
-            System.out.print("Approve (A) or Reject (R) this officer? ");
-            String decision = scanner.nextLine().trim().toUpperCase();
-
-            if (decision.equals("A")) {
-            	if (selectedProject.getRemainingOfficerSlots() <= 0) {
-                    System.out.println("No remaining officer slots for this project.");
-                } 
-                else {
-                    selectedProject.getApprovedOfficers().add(officerName);
-                    pending.remove(officerName);
-                    System.out.println("Officer " + officerName + " approved.");
-                }
-            }
-            else if (decision.equals("R")) {
-                pending.remove(officerName);
-                System.out.println("Officer " + officerName + " rejected.");
-            } else {
-                System.out.println("Invalid choice. Try again.");
-            }
-
-            if (pending.isEmpty()) {
-                System.out.println("No more pending officers.");
+        // SEARCH FOR PROJECT THAT MANAGER IS IN CHARGE OF //
+        int indexOfProject = 0;
+        List<TemplateProject> copyOfTemplateProjects = projectManager.getTemplateProjects();
+        TemplateProject projInCharge = null;
+        for (TemplateProject t : copyOfTemplateProjects) {
+            if (t.getManagerName().equals(manager.getName())) {
+                projInCharge = t;
                 break;
             }
+            indexOfProject++;
+        }
+        if (projInCharge != null) {
+            List<String> pendingOfficers = projInCharge.getPendingOfficers();
+            List<String> approvedOfficers = projInCharge.getApprovedOfficers();
+            System.out.println("These officers are requesting to assist with your project:");
+            int i = 1;
+            for (String officerName : pendingOfficers) {
+                System.out.printf("[%d] %s", i, officerName);
+            }
+            System.out.print("Enter number of officer to process: ");
+            int officerChoice = sc.nextInt();
+            sc.nextLine();
+
+            System.out.println("\n[A] Approve | [R] Reject\n");
+            System.out.print("Type choice here: ");
+            String approval = sc.nextLine();
+
+            if (approval.equalsIgnoreCase("a")) {
+                approvedOfficers.add(pendingOfficers.get(officerChoice - 1));
+                pendingOfficers.remove(officerChoice - 1);
+                // UPDATE MAIN LIST //
+                projInCharge.setPendingOfficers(pendingOfficers);
+                projInCharge.setApprovedOfficers(approvedOfficers);
+                copyOfTemplateProjects.set(indexOfProject, projInCharge);
+                projectManager.updateTemplateProjects(copyOfTemplateProjects);
+                // CONFIRM SUCCESS //
+                System.out.println("\nOfficer successfully approved.\n");
+            }
+            else if (approval.equalsIgnoreCase("r")) {
+                pendingOfficers.remove(officerChoice - 1);
+                // UPDATE MAIN LIST //
+                projInCharge.setPendingOfficers(pendingOfficers);
+                copyOfTemplateProjects.set(indexOfProject, projInCharge);
+                projectManager.updateTemplateProjects(copyOfTemplateProjects);
+                // CONFIRM SUCCESS //
+                System.out.println("\nOfficer successfully rejected.\n");
+            }
+            else {
+                System.out.println("\nInvalid selection. Try again.\n");
+            }
+        } 
+        else {
+            System.out.println("No project found for this manager.");
         }
     }
-    
-    // Not very sure if it will work cause even if applicant send a request, i cant approve or reject it
-    // because the session for Applicant will end once he logs out. 
+
     public void manageBookingRequests() {
         if (applicationHandler.getBookingsPendingApproval().isEmpty()) {
             System.out.println("There are no booking requests to review.");
@@ -398,6 +391,31 @@ public class ManagerPortal {
             System.out.println("Booking rejected.");
         } else {
             System.out.println("Invalid input. No action taken.");
+        }
+    }
+
+    public void changePassword() {
+        boolean exit = false;
+        while (!exit) {
+            System.out.println("At any point, input [0] to exit.");
+            System.out.print("Enter new password: ");
+            String firstEntry = sc.nextLine();
+            if (firstEntry.equals("0")) {
+                break;
+            }
+            System.out.print("Enter new password again: ");
+            String secondEntry = sc.nextLine();
+            if (secondEntry.equals("0")) {
+                break;
+            }
+            else if (!(firstEntry.equals(secondEntry))) {
+                System.out.println("ERROR: passwords do not match. Try again.");
+            }
+            else if (firstEntry.equals(secondEntry)) {
+                manager.changePassword(secondEntry);
+                System.out.println("\nPassword successfully changed!\n");
+                exit = true;
+            }
         }
     }
 }

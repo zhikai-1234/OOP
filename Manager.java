@@ -1,10 +1,19 @@
 
 public class Manager extends User {
-    private String[] managedProj;
-    private String[] approvedOfficer;
+
+    private TemplateProject projectInCharge;
 
     public Manager(String name, String userID, int age, String maritalStatus) {
         super(name, userID, age, maritalStatus);
+        this.projectInCharge = null;
+    }
+
+    public void setProjectInCharge(TemplateProject p) {
+        this.projectInCharge = p;
+    }
+
+    public TemplateProject getProjectInCharge() {
+        return this.projectInCharge;
     }
 } 
     

@@ -37,7 +37,8 @@ public class OfficerPortal extends ApplicantPortal {
         System.out.println("[4] View/reply to enquiries regarding the project you are handling");
         System.out.println("[5] Officially book a flat for a successful applicant");
         System.out.println("[6] Generate a receipt for an applicant's successful booking");
-        System.out.println("[7] Exit Officer Menu");
+        System.out.println("[7] Change password");
+        System.out.println("[8] Exit Officer Menu");
     }
 
     @Override
@@ -108,7 +109,9 @@ public class OfficerPortal extends ApplicantPortal {
                     System.out.println("Feature currently unavailable...");
                 }
 
-                case 7 -> {
+                case 7 -> changePassword();
+
+                case 8 -> {
                      officerExit = true;
                 }
                 default -> System.out.println("Invalid selection. Please try again.");
@@ -184,12 +187,39 @@ public class OfficerPortal extends ApplicantPortal {
 
         // Update applicant records
         a.setProjApplied(liveProject);
-        a.setApplicationStatus("Flat Booked");
+        a.setApplicationStatus("Booked");
         a.setBookedFlat(true);
+        a.setBookedFlatType(flatType);
         
         // Update project manager
         pm.addLiveProject(a, liveProject);
         
         ah.removeBookingsPendingApproval(a);
+    }
+
+    public void generateReceipt(Applicant a) {
+        System.out.println("=======================================");
+        System.out.println("\nRECEIPT FOR SUCCESSFUL BOOKING\n");
+        System.out.println("Applicant's name: " + a.getName());
+        System.out.println("Applicant's NRIC: " + a.getUserID());
+        System.out.println("Applicant's Age: " + a.getAge());
+        System.out.println("Applicant's Marital Status: " + a.getMaritalStatus());
+        System.out.println();
+        System.out.printf("Flat Type Booked: %d-Room Flat\n", a.getBookedFlatType() + 1);
+        System.out.println("\nPROJECT DETAILS:\n");
+        TemplateProject applicantProj = a.getProjApplied();
+        System.out.println("Project Name: " + applicantProj.getName());
+        System.out.println("Neighbourhood: " + applicantProj.getNeighbourhood());
+        if (a.getBookedFlatType() == 1) {
+            System.out.printf("Unit Price: %.2f\n" + applicantProj.getType1Price());
+        }
+        else if (a.getBookedFlatType() == 2) {
+            System.out.printf("Unit Price: %.2f\n" + applicantProj.getType2Price());
+        }
+        System.out.println("Name of Manager: " + applicantProj.getManagerName());
+        System.out.println("List of approved officers:");
+        for (String officerName : applicantProj.getApprovedOfficers()) {
+            System.out.println(officerName);
+        }
     }
 }

@@ -136,4 +136,29 @@ public class EnquiryHandler {
             System.out.println("==============================================");
         }
     }
+
+    public void replyToEnquiriesManager(Manager m, TemplateProject proj, Scanner sc) { // must pass officer's assigned project as argument
+    if (proj.getEnquiries().isEmpty()) {
+        System.out.println("No enquiries found for this project.");
+    }
+    else {
+        int i = 1;
+        System.out.println("Displaying all available enquiries for this project...");
+        System.out.println();
+        for (Enquiry e : proj.getEnquiries()) {
+            System.out.printf("[%d] Question: %s\n", i, e.getEnquiry());
+            i++;
+        }
+        System.out.println("Enter the number of the enquiry you would like to reply to: ");
+        int enquiryChoice = sc.nextInt();
+        sc.nextLine();
+        System.out.println("Now replying to:");
+        System.out.println(proj.getEnquiries().get(enquiryChoice - 1).getEnquiry());
+        System.out.println();
+        System.out.println("Enter your response below:");
+        String reply = sc.nextLine();
+        proj.getEnquiries().get(enquiryChoice - 1).setResponse(reply);
+        System.out.println("\nReply submitted successfully.");
+    }
+}
 }

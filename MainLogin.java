@@ -29,6 +29,7 @@ public class MainLogin {
         Scanner sc = new Scanner(System.in);
         User user;
 
+        // AUTO-ASSIGN OFFICERS TO PROJECTS BASED ON PROVIDED DATA //
         for (TemplateProject t : pm.getTemplateProjects()) {
             for (Officer o : userRepo.getAllOfficers()) {
                 if (t.getApprovedOfficers().contains(o.getName())) {
@@ -40,6 +41,15 @@ public class MainLogin {
             }
         }
 
+        // AUTO-ASSIGN MANAGERS TO THEIR RESPECTIVE PROJECTS BASED ON PROVIDED DATA //
+        for (TemplateProject t : pm.getTemplateProjects()) {
+            for (Manager m : userRepo.getAllManagers()) {
+                if (t.getManagerName().equals(m.getName())) {
+                    m.setProjectInCharge(t);
+                }
+            }
+        }
+        
         // DEBUG STATEMENT //
         /* for (Officer o: userRepo.getAllOfficers()) {
             if (o.getAssignedProjectAsOfficer() == null && o.getAppliedProjectAsOfficer() != null) { // applied but not approved
