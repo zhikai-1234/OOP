@@ -97,9 +97,7 @@ public class MainLogin {
                 quitProgram = true;
                 pm.saveTemplateProjectsToFile("ProjectList.csv");
               
-                userRepo.saveUsersToFile("ApplicantList.csv", userRepo.getAllApplicants());
-                userRepo.saveUsersToFile("OfficerList.csv", userRepo.getAllOfficers());
-                userRepo.saveUsersToFile("ManagerList.csv", userRepo.getAllManagers());
+                userRepo.saveAllUsers();
             }
             else {
                 System.out.println("\nNew login...\n");

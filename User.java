@@ -4,12 +4,12 @@ public abstract class User { //Make it abstract, so that no one can create a Use
     private String name, UserID, password, maritalStatus;
     private int age;
 
-    public User(String name, String UserID, int age, String maritalStatus) {
+    public User(String name, String UserID, int age, String maritalStatus, String password) {
         this.name = name;
         this.UserID = UserID;
         this.age = age;
         this.maritalStatus = maritalStatus;
-        this.password = "password";
+        this.password = password;
     }
 
     public String getName() {

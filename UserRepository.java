@@ -32,14 +32,15 @@ public class UserRepository {
                  String nric = parts[1].trim();
                  int age = Integer.parseInt(parts[2].trim());
                  String maritalStatus = parts[3].trim();
+                 String password = parts[4].trim();
 
                  switch (userType.toLowerCase()) {
 
-                    case "applicant" -> users.add(new Applicant(name, nric, age, maritalStatus));
+                    case "applicant" -> users.add(new Applicant(name, nric, age, maritalStatus, password));
 
-                    case "officer" -> users.add(new Officer(name, nric, age, maritalStatus));
+                    case "officer" -> users.add(new Officer(name, nric, age, maritalStatus, password));
 
-                    case "manager" -> users.add(new Manager(name, nric, age, maritalStatus));
+                    case "manager" -> users.add(new Manager(name, nric, age, maritalStatus, password));
                  }
             } reader.close();
          } 
@@ -67,6 +68,24 @@ public class UserRepository {
 
         System.out.println("Invalid login!");
         return null;
+    }
+    
+    
+    public void saveAllUsers() {
+        List<Applicant> applicants = new ArrayList<>();
+        List<Officer> officers = new ArrayList<>();
+        List<Manager> managers = new ArrayList<>();
+
+        for (User u : users) {
+            if (u instanceof Officer o) officers.add(o);
+            else if (u instanceof Manager m) managers.add(m);
+            else if (u instanceof Applicant a && !(u instanceof Officer)) applicants.add(a); 
+ 
+        }
+
+        saveUsersToFile("ApplicantList.csv", applicants);
+        saveUsersToFile("OfficerList.csv", officers);
+        saveUsersToFile("ManagerList.csv", managers);
     }
     
     public void saveUsersToFile(String filePath, List<? extends User> users) {
