@@ -32,14 +32,15 @@ public class UserRepository {
                  String nric = parts[1].trim();
                  int age = Integer.parseInt(parts[2].trim());
                  String maritalStatus = parts[3].trim();
+                 String password = parts[4].trim();
 
                  switch (userType.toLowerCase()) {
 
-                    case "applicant" -> users.add(new Applicant(name, nric, age, maritalStatus));
+                    case "applicant" -> users.add(new Applicant(name, nric, age, maritalStatus, password));
 
-                    case "officer" -> users.add(new Officer(name, nric, age, maritalStatus));
+                    case "officer" -> users.add(new Officer(name, nric, age, maritalStatus, password));
 
-                    case "manager" -> users.add(new Manager(name, nric, age, maritalStatus));
+                    case "manager" -> users.add(new Manager(name, nric, age, maritalStatus, password));
                  }
             } reader.close();
          } 

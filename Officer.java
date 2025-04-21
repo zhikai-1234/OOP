@@ -2,8 +2,8 @@ public class Officer extends Applicant {
     private TemplateProject appliedProjectAsOfficer;
     private TemplateProject assignedProjectAsOfficer;
 
-    public Officer(String name, String userID, int age, String maritalStatus) {
-        super(name, userID, age, maritalStatus);
+    public Officer(String name, String userID, int age, String maritalStatus, String password) {
+        super(name, userID, age, maritalStatus, password);
         this.appliedProjectAsOfficer = null;
         this.assignedProjectAsOfficer = null;
     }

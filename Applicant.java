@@ -6,8 +6,8 @@ public class Applicant extends User{
     private boolean hasBookedFlat;
     private int bookedFlatType;
 
-    public Applicant(String name, String userID, int age, String maritalStatus) {
-        super(name, userID, age, maritalStatus);
+    public Applicant(String name, String userID, int age, String maritalStatus, String password) {
+        super(name, userID, age, maritalStatus, password);
         this.projApplied = null;
         this.applicationStatus = "No Project Applied";
         this.eligibilityStatus = checkEligibility();
