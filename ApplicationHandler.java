@@ -203,7 +203,7 @@ public class ApplicationHandler {
 
         if (approval.equals("a")) {
             approvedProjects.put(getApplicantFromName(applicantName), getApplicantFromName(applicantName).getProjApplied());
-            getApplicantFromName(applicantName).setApplicationStatus("Successful");
+            getApplicantFromName(applicantName).setApplicationStatus("Approved");
             System.out.println("Application successfully approved.");
         }
 
@@ -278,6 +278,10 @@ public class ApplicationHandler {
 
     // GETTERS //
     public void viewAppliedProject(Applicant a) {
+        if(a.getProjApplied() == null) {
+            System.out.println("No project applied for.");
+            return;
+        }
         if (projectsPendingApproval.containsKey(a)) {
             System.out.println("Applied project: ");
             TemplateProject applicantProject = a.getProjApplied();

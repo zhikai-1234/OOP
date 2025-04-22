@@ -37,8 +37,8 @@ public class TemplateProject {
         this.visibility = visibility;
         this.enquiries = new ArrayList<>();
 
-        System.out.println("Number of Type 1: " + nType1);
-        System.out.println("Number of Type 2: " + nType2);
+       // System.out.println("Number of Type 1: " + nType1);
+        //System.out.println("Number of Type 2: " + nType2);
     }
 
     // GETTERS //

@@ -29,6 +29,24 @@ public class MainLogin {
         Scanner sc = new Scanner(System.in);
         User user;
 
+        System.out.println("System starting...");
+        System.out.println();
+        System.out.println("┌" + "─".repeat(42) + "┐");
+        System.out.println("│                                          │");
+        System.out.println("│    ██████    ███      ███    ██████      │");
+        System.out.println("│    ██    ██ ██ ██    ██ ██ ██            │");
+        System.out.println("│    ██████   ██  ██  ██  ██   █████       │");
+        System.out.println("│    ██    ██ ██   ████   ██        ██     │");
+        System.out.println("│    ██████   ██    ██    ██  ██████       │");
+        System.out.println("│                                          │");
+        System.out.println("│  Welcome to HDB Flat Management System   │");
+        System.out.println("│                                          │");
+        System.out.println("│                 SC2002                   │");
+        System.out.println("│                 FCSA                     │");
+        System.out.println("│                 TEAM 3                   │");
+        System.out.println("└" + "─".repeat(42) + "┘");
+        System.out.println();
+
         // AUTO-ASSIGN OFFICERS TO PROJECTS BASED ON PROVIDED DATA //
         for (TemplateProject t : pm.getTemplateProjects()) {
             for (Officer o : userRepo.getAllOfficers()) {
@@ -73,7 +91,7 @@ public class MainLogin {
             else if (user instanceof Officer officer) {
                 OfficerPortal offPortal = new OfficerPortal(officer, pm, ah, eh);
                 offPortal.portal();
-            }
+            }   
 
             else if (user instanceof Applicant applicant) {
                 ApplicantPortal appPortal = new ApplicantPortal(applicant, pm, ah, eh);
