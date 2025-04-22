@@ -51,8 +51,19 @@ public class OfficerPortal extends ApplicantPortal {
             System.out.println("[2] Officer");
             System.out.println("[3] Log out");
             System.out.print("Enter your choice: ");
-            int roleChoice = sc.nextInt();
-            sc.nextLine(); 
+            int roleChoice;
+            while (true) {
+                System.out.print("Enter your choice: ");
+                if (sc.hasNextInt()) {
+                    roleChoice = sc.nextInt();
+                    sc.nextLine(); // consume the newline
+                    break;
+                } else {
+                    System.out.println("Invalid input. Please enter a number.");
+                    sc.nextLine(); // consume the invalid input
+                }
+            }
+
 
             switch (roleChoice) {
                 case 1 -> super.portal(); 
@@ -108,7 +119,44 @@ public class OfficerPortal extends ApplicantPortal {
                 }
 
                 case 3 -> {
-                    System.out.println("Feature currently unavailable...");
+                    List<TemplateProject> allProjects = pm.getTemplateProjects();
+                    List<TemplateProject> eligibleProjects = new ArrayList<>();
+
+                    for (TemplateProject project : allProjects) {
+                        boolean isHandling = project.getApprovedOfficers().contains(officer.getName()) 
+                                            || project.getPendingOfficers().contains(officer.getName());
+                        if (!isHandling) {
+                            eligibleProjects.add(project);
+                        }
+                     }
+                    if (eligibleProjects.isEmpty()) {
+                        System.out.println("You are not eligible to apply for any other projects.");
+                    } 
+                    else { System.out.println("\nAvailable Projects:");
+                        int i = 1;
+                        for (TemplateProject p : eligibleProjects) {
+                            System.out.printf("[%d] %s - %s\n", i, p.getName(), p.getNeighbourhood());
+                            i++;
+                        }
+                
+                        System.out.print("Select project to apply as applicant: ");
+                        int projChoice = sc.nextInt();
+                        sc.nextLine();
+                
+                        if (projChoice < 1 || projChoice > eligibleProjects.size()) {
+                            System.out.println("Invalid selection");
+                        }
+                        else {
+                            TemplateProject selectedProject = eligibleProjects.get(projChoice - 1);
+                            
+                            // Verify officer meets applicant requirements
+                            if (officer.getEligibilityStatus() > 0) {
+                                ah.applyForProject(officer, selectedProject, sc);
+                            } else {
+                                System.out.println("You do not meet applicant eligibility requirements");
+                            }
+                        }
+                    }
                 }
 
                 case 4 -> {
@@ -117,11 +165,18 @@ public class OfficerPortal extends ApplicantPortal {
                 }
 
                 case 5 -> {
-                    System.out.println("Feature currently unavailable...");
+                    UserRepository userRepo = new UserRepository();
+                    System.out.println("Enter the UserID of the applicant to book a flat for: ");
+                    String id = sc.nextLine();
+                    updateApprovedBooking(userRepo.getApplicantByUserID(id));
                 }
 
                 case 6 -> {
-                    System.out.println("Feature currently unavailable...");
+                    UserRepository userRepo = new UserRepository();
+                    System.out.println("Enter the UserID of the applicant to generate a receipt for: ");
+                    String id = sc.nextLine();
+                    System.out.println("Generating receipt for successful booking...");
+                    generateReceipt(userRepo.getApplicantByUserID(id));
                 }
 
                 case 7 -> changePassword();

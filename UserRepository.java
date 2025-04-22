@@ -135,7 +135,7 @@ public class UserRepository {
     public Applicant getApplicantByUserID(String userID) {
         List<Applicant> allApplicants = getAllApplicants();
         for (Applicant a : allApplicants) {
-            if (a.getUserID().equals(userID)) {
+            if (a.getUserID().toLowerCase().equals(userID.toLowerCase())){
                 return a;
             }
         }
@@ -146,7 +146,7 @@ public class UserRepository {
     public Officer getOfficerByUserID(String userID) {
         List<Officer> allOfficers = getAllOfficers();
         for (Officer o : allOfficers) {
-            if (o.getUserID().equals(userID)) {
+            if (o.getUserID().toLowerCase().equals(userID.toLowerCase())) {
                 return o;
             }
         }
@@ -157,7 +157,7 @@ public class UserRepository {
     public Manager getManagerByUserID(String userID) {
         List<Manager> allManagers = getAllManagers();
         for (Manager m : allManagers) {
-            if (m.getUserID().equals(userID)) {
+            if (m.getUserID().toLowerCase().equals(userID.toLowerCase())) {
                 return m;
             }
         }
