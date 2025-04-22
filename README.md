@@ -78,7 +78,6 @@ The **BTO Management System** is a Java console application that simulates the B
 ## Testing
 
 - Manual functional testing has been conducted for all major features.
-- See the `TESTING.md` (if provided) for detailed test cases and results.
 
 ## Contributing
 
