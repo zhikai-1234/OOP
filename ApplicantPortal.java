@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.Set;
 
-public class ApplicantPortal {
+public class ApplicantPortal implements PortalInterface {
 	
 	private Applicant applicant;
 	Scanner sc = new Scanner(System.in);
