@@ -156,7 +156,7 @@ public class ProjectManager {
         for (Map.Entry<String, LiveProject> liveProj : liveProjects.entrySet()) {
             Applicant currentApplicant = liveProj.getValue().getApplicant();
             System.out.printf("\n Applicant Name: %s\n", currentApplicant.getName());
-            System.out.printf("Flat Type: %-Room | Project Name: %s | Age: %d | Marital Status: %s\n", 
+            System.out.printf("Flat Type: %d-Room | Project Name: %s | Age: %d | Marital Status: %s\n", 
             currentApplicant.getAppliedFlatType(), currentApplicant.getProjApplied().getName(), currentApplicant.getAge(), 
             currentApplicant.getMaritalStatus());
         }

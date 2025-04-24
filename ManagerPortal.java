@@ -296,29 +296,43 @@ public class ManagerPortal {
         if (projInCharge != null) {
             List<String> pendingOfficers = projInCharge.getPendingOfficers();
             List<String> approvedOfficers = projInCharge.getApprovedOfficers();
+            if (pendingOfficers.isEmpty()) {
+                System.out.println("There are no officer applications pending for your project.");
+                return;
+            }
             System.out.println("These officers are requesting to assist with your project:");
             int i = 1;
             for (String officerName : pendingOfficers) {
-                System.out.printf("[%d] %s", i, officerName);
+                System.out.printf("[%d] %s ", i++, officerName);
             }
-            System.out.print("Enter number of officer to process: ");
+            System.out.print("\nEnter number of officer to process: ");
             int officerChoice = sc.nextInt();
             sc.nextLine();
+            
+            if (officerChoice < 1 || officerChoice > pendingOfficers.size()) {
+                System.out.println("\nInvalid selection. Try again.\n");
+                return;
+            }
 
             System.out.println("\n[A] Approve | [R] Reject\n");
             System.out.print("Type choice here: ");
             String approval = sc.nextLine();
 
             if (approval.equalsIgnoreCase("a")) {
-                approvedOfficers.add(pendingOfficers.get(officerChoice - 1));
-                pendingOfficers.remove(officerChoice - 1);
-                // UPDATE MAIN LIST //
-                projInCharge.setPendingOfficers(pendingOfficers);
-                projInCharge.setApprovedOfficers(approvedOfficers);
-                copyOfTemplateProjects.set(indexOfProject, projInCharge);
-                projectManager.updateTemplateProjects(copyOfTemplateProjects);
-                // CONFIRM SUCCESS //
-                System.out.println("\nOfficer successfully approved.\n");
+            	if (projInCharge.getRemainingOfficerSlots() > 0) {
+                    approvedOfficers.add(pendingOfficers.get(officerChoice - 1));
+                    pendingOfficers.remove(officerChoice - 1);
+                    // UPDATE MAIN LIST //
+                    projInCharge.setPendingOfficers(pendingOfficers);
+                    projInCharge.setApprovedOfficers(approvedOfficers);
+                    copyOfTemplateProjects.set(indexOfProject, projInCharge);
+                    projectManager.updateTemplateProjects(copyOfTemplateProjects);
+                    // CONFIRM SUCCESS //
+                    System.out.println("\nOfficer successfully approved.\n");
+            	}
+                else {
+                    System.out.println("\nApproval failed: No remaining officer slots available.\n");
+                }
             }
             else if (approval.equalsIgnoreCase("r")) {
                 pendingOfficers.remove(officerChoice - 1);

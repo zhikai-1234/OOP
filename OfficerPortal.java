@@ -165,18 +165,26 @@ public class OfficerPortal extends ApplicantPortal {
                 }
 
                 case 5 -> {
-                    UserRepository userRepo = new UserRepository();
-                    System.out.println("Enter the UserID of the applicant to book a flat for: ");
-                    String id = sc.nextLine();
-                    updateApprovedBooking(userRepo.getApplicantByUserID(id));
+                	System.out.println("Enter the UserID of the applicant to book a flat for: ");
+                	String id = sc.nextLine();
+                	Applicant target = ah.getApplicantFromNRIC(id);
+                	if (target == null) {
+                	    System.out.println("Applicant not found.");
+                	} else {
+                	    updateApprovedBooking(target);
+                	}
                 }
 
                 case 6 -> {
-                    UserRepository userRepo = new UserRepository();
-                    System.out.println("Enter the UserID of the applicant to generate a receipt for: ");
-                    String id = sc.nextLine();
-                    System.out.println("Generating receipt for successful booking...");
-                    generateReceipt(userRepo.getApplicantByUserID(id));
+                	System.out.println("Enter the UserID of the applicant to generate a receipt for: ");
+                	String id = sc.nextLine();
+                	Applicant target = ah.getApplicantFromNRIC(id);
+                	if (target == null) {
+                	    System.out.println("Applicant not found.");
+                	} else {
+                	    System.out.println("Generating receipt for successful booking...");
+                	    generateReceipt(target);
+                	}
                 }
 
                 case 7 -> changePassword();
@@ -249,6 +257,12 @@ public class OfficerPortal extends ApplicantPortal {
             p.getVisibility(),
             a
         );
+        liveProject.setApprovedOfficers(p.getApprovedOfficers()); 
+        // Add this so after Officer helps book applicant,
+        // the approved officers list from the original TemplateProject
+        // is properly copied into the new LiveProject.
+        // This prevents the null pointer exceptions during receipt generation
+        // when calling getApprovedOfficers() in generateReceipt().
 
         // Update unit availability
         if(flatType == 1 && liveProject.getNumOfType1() > 0) {
@@ -286,10 +300,10 @@ public class OfficerPortal extends ApplicantPortal {
         System.out.println("Project Name: " + applicantProj.getName());
         System.out.println("Neighbourhood: " + applicantProj.getNeighbourhood());
         if (a.getBookedFlatType() == 1) {
-            System.out.printf("Unit Price: %.2f\n" + applicantProj.getType1Price());
+        	System.out.printf("Unit Price: %.2f\n", applicantProj.getType1Price());
         }
         else if (a.getBookedFlatType() == 2) {
-            System.out.printf("Unit Price: %.2f\n" + applicantProj.getType2Price());
+        	System.out.printf("Unit Price: %.2f\n", applicantProj.getType2Price());
         }
         System.out.println("Name of Manager: " + applicantProj.getManagerName());
         System.out.println("List of approved officers:");
