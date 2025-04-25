@@ -160,7 +160,7 @@ public class ProjectManager {
         System.out.println("[2] Only married applicants");
         System.out.println("[3] Only 2-Room bookings");
         System.out.println("[4] Only 3-Room bookings");
-        System.out.println("[5] Age above...");
+        System.out.println("[5] Age above");
         System.out.println("[6] Filter by project name");
         System.out.println("[0] Cancel");
 
