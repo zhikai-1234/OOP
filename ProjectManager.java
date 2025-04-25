@@ -152,21 +152,82 @@ public class ProjectManager {
     }
 
     // FOR MANAGER //
-    public void generateReport() {
-        for (Map.Entry<String, LiveProject> liveProj : liveProjects.entrySet()) {
-            Applicant currentApplicant = liveProj.getValue().getApplicant();
+    public void generateFilteredReport(Scanner sc) {
+        System.out.println("=== Generate Booking Report with Filters ===");
 
-            //To only show if applicant has actually booked a flat if after booking 
-            //applicant withdraw that this wont print
-            if (!currentApplicant.hasBookedFlat()) {
-            	System.out.println("\nNo BookedFlat\n");
-                continue; 
+        System.out.println("Apply filters?");
+        System.out.println("[1] All applicants");
+        System.out.println("[2] Only married applicants");
+        System.out.println("[3] Only 2-Room bookings");
+        System.out.println("[4] Only 3-Room bookings");
+        System.out.println("[5] Age above...");
+        System.out.println("[6] Filter by project name");
+        System.out.println("[0] Cancel");
+
+        System.out.print("Enter your choice: ");
+        int choice = Integer.parseInt(sc.nextLine());
+
+        String maritalFilter = null;
+        Integer flatTypeFilter = null;
+        Integer age = null;
+        String projectNameFilter = null;
+       
+        //Set the whatever filter the Manager wants to filter based of
+        switch (choice) {
+            case 0 -> { 
+            	return; //Cancel the report
+            	}
+            case 2 -> maritalFilter = "Married"; //Filter by marriage
+            case 3 -> flatTypeFilter = 1; //Filter by 2-Room
+            case 4 -> flatTypeFilter = 2; //or 3-Room
+            case 5 -> {
+                System.out.print("Enter minimum age: "); //Or by age
+                age = Integer.parseInt(sc.nextLine());
             }
-            System.out.printf("\n Applicant Name: %s\n", currentApplicant.getName());
-            System.out.printf("Flat Type: %d-Room | Project Name: %s | Age: %d | Marital Status: %s\n", 
-            currentApplicant.getAppliedFlatType(), currentApplicant.getProjApplied().getName(), currentApplicant.getAge(), 
-            currentApplicant.getMaritalStatus());
+            case 6 -> {
+                System.out.print("Enter project name to filter by: "); //Or Project Name
+                projectNameFilter = sc.nextLine().trim();
+            }
         }
+
+        System.out.println("\n=== Filtered Report ===");
+        boolean found = false; //Set false first
+
+        //Iterate over all LiveProject entries (each is tied to one applicant)
+        for (Map.Entry<String, LiveProject> entry : liveProjects.entrySet()) {
+            Applicant a = entry.getValue().getApplicant();
+            
+            //Skip if the applicant has not booked a flat yet
+            if (!a.hasBookedFlat()){
+            	continue;
+            }
+
+            //Apply marriage status filter if it is set
+            if (maritalFilter != null && !a.getMaritalStatus().equalsIgnoreCase(maritalFilter)) {
+            	continue;
+            }
+            //Apply flat type filter if it is set
+            if (flatTypeFilter != null && a.getBookedFlatType() != flatTypeFilter) {
+            	continue;
+            }
+            //Apply age filter if it is set
+            if (age != null && a.getAge() < age) {
+            	continue;
+            }
+            //Apply project name filter if it is set
+            if (projectNameFilter != null && !a.getProjApplied().getName().equalsIgnoreCase(projectNameFilter)) {
+            	continue;
+            }
+
+            //If all filters passed, set it as found and print applicant details
+            found = true;
+            String flatTypeLabel = (a.getBookedFlatType() == 1) ? "2-Room" : "3-Room";
+            
+            System.out.printf("Name: %s | Flat: %s | Project: %s | Age: %d | Marital: %s\n",
+            a.getName(), flatTypeLabel, a.getProjApplied().getName(), a.getAge(), a.getMaritalStatus());
+        }
+
+        if (!found) System.out.println("No matching bookings found."); //Dont have
     }
 
     public LiveProject convertTemplateToLive(Applicant a, TemplateProject t) {

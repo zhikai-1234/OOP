@@ -1,5 +1,5 @@
 Project Name,Neighborhood,Type 1,Number of units for Type 1,Selling price for Type 1,Type 2,Number of units for Type 2,Selling price for Type 2,Application opening date,Application closing date,Manager,Officer Slot,Pending Officers,Approved Officers,Visibility
-Acacia Breeze,Yishun,2-Room,2,350000.0,3-Room,3,450000.0,2025-04-20,2025-05-10,Jessica,2,David,Daniel|Emily,true
+Acacia Breeze,Yishun,2-Room,2,350000.0,3-Room,3,450000.0,2025-04-20,2025-05-10,Jessica,2,,Daniel|Emily,true
 Test Heights,Jurong,2-Room,0,300000.0,3-Room,4,400000.0,2025-05-05,2025-06-01,Jessica,5,,David,true
 Fann House,Boon Lay,2-Room,5,300000.0,3-Room,5,500000.0,2025-04-15,2025-04-28,Michael,5,,,true
 Renewal Estate,Yishun,2-Room,0,400000.0,3-Room,5,600000.0,2025-06-15,2025-07-10,Jessica,5,,,true

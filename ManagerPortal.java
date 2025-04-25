@@ -62,7 +62,7 @@ public class ManagerPortal implements PortalInterface{
                 case 6 -> manageOfficerApplications();
                 case 7 -> applicationHandler.approveApplication(sc, manager);
                 case 8 -> applicationHandler.approveWithdrawals(sc);
-                case 9 -> projectManager.generateReport();
+                case 9 -> projectManager.generateFilteredReport(sc);
                 case 10 -> {
                     System.out.println("1. View enquiries of ALL projects");
                     System.out.println("2. View and reply to enquiries regarding YOUR projects");
