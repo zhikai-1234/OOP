@@ -51,8 +51,14 @@ public class ApplicantPortal implements PortalInterface {
 
 			showOptions();
 			System.out.print("Enter your choice: ");
-			int choice = sc.nextInt();
-			sc.nextLine();
+			int choice;
+			try {
+			    choice = Integer.parseInt(sc.nextLine().trim());
+			} 
+			catch (NumberFormatException e) {
+			    System.out.println("Invalid input. Enter Number Only");
+			    continue;
+			}
 
 			switch (choice) {
 			
@@ -65,16 +71,21 @@ public class ApplicantPortal implements PortalInterface {
 			    UserFilter filter = pm.getFilterForUser(applicant.getName());
 			    List<TemplateProject> filtered = filter.filterProjects(pm.getTemplateProjects());
 
-			    if (filtered.isEmpty()) {
-			        System.out.println("No matching projects found with the current filter settings.");
-			    } else {
-			        for (TemplateProject p : filtered) {
-			            if (applicant.getMaritalStatus().equals("Single")) {
-			                pm.display2RoomProjectDetails(p);
-			            } else {
-			                pm.display2and3RoomProjectDetails(p);
-			            }
+			    boolean found = false;
+			    for (TemplateProject p : filtered) {
+			        if (!p.isWithinApplicationPeriod()) {
+			        	continue; //Skip all the closed projects
 			        }
+			        if (applicant.getMaritalStatus().equals("Single")) {
+			            pm.display2RoomProjectDetails(p);
+			        } else {
+			            pm.display2and3RoomProjectDetails(p);
+			        }
+			        found = true;
+			    }
+
+			    if (!found) {
+			        System.out.println("No open projects found");
 			    }
 			}
 			
@@ -87,29 +98,44 @@ public class ApplicantPortal implements PortalInterface {
 			    UserFilter filter = pm.getFilterForUser(applicant.getName());
 			    List<TemplateProject> filtered = filter.filterProjects(pm.getTemplateProjects());
 
-			    if (filtered.isEmpty()) {
-			        System.out.println("No matching projects found with the current filter settings.");
-			    } else {
+			    List<TemplateProject> openProjects = new ArrayList<>();
+			    for (TemplateProject p : filtered) {
+			        if (p.isWithinApplicationPeriod()) {
+			            openProjects.add(p);
+			        }
+			    }
+
+			    if (openProjects.isEmpty()) {
+			        System.out.println("No matching open projects available to apply.");
+			    } 
+			    else {
 			        int i = 1;
-			        for (TemplateProject p : filtered) {
+			        for (TemplateProject p : openProjects) {
 			            System.out.printf("\nProject %d\n", i);
 			            if (applicant.getMaritalStatus().equals("Single")) {
 			                pm.display2RoomProjectDetails(p);
-			            } else {
+			            }
+			            else {
 			                pm.display2and3RoomProjectDetails(p);
 			            }
 			            i++;
-			        } 
+			        }
 
 			        System.out.println("Choose a project to apply for:");
-			        Scanner sc = new Scanner(System.in);
-			        int projChoice = sc.nextInt();
-			        sc.nextLine();
+			        int projChoice;
+			        try {
+			            projChoice = Integer.parseInt(sc.nextLine().trim());
+			        } 
+			        catch (NumberFormatException e) {
+			            System.out.println("Invalid input. Enter Number Only");
+			            return;
+			        }
 
-			        if (projChoice < 1 || projChoice > filtered.size()) {
+			        if (projChoice < 1 || projChoice > openProjects.size()) {
 			            System.out.println("Invalid project choice.");
-			        } else {
-			            TemplateProject selectedProject = filtered.get(projChoice - 1);
+			        } 
+			        else {
+			            TemplateProject selectedProject = openProjects.get(projChoice - 1);
 			            ah.applyForProject(applicant, selectedProject, sc);
 			        }
 			    }
@@ -127,8 +153,11 @@ public class ApplicantPortal implements PortalInterface {
 					ah.withdrawApplicationAfterApproval(applicant);
 				}
 			}
-				
-			case 6 -> eh.submitEnquiry(applicant, sc);
+			
+			//We Should still allow applicants to enquire details of projects that are
+			//either not open for application yet or no visibility so that they can still ask
+			//like when open? etc etc
+			case 6 -> eh.submitEnquiry(applicant, sc); 
 				
 			case 7 -> eh.displayAndManageUserEnquiries(applicant);
 

@@ -1,3 +1,5 @@
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,6 +21,8 @@ public class TemplateProject {
     private List<String> approvedOfficers;
     private boolean visibility;
     private List<Enquiry> enquiries;
+    //Default formatter for date pattern of yyyy-MM-dd
+    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     public TemplateProject(String name, String neighbourhood, String type1, int nType1, double type1price, String type2, int nType2,
      double type2price, String openDate, String closeDate, String managerName, int nOfficers, boolean visibility) {
@@ -174,6 +178,36 @@ public class TemplateProject {
  
     public void setVisibility(boolean visibility) {
         this.visibility = visibility;
+    }
+    
+    //Check the application date if fall inbetween the application period
+    //BTW: its inclusive of opening and closing dates
+    public boolean isWithinApplicationPeriod() {
+        LocalDate today = LocalDate.now(); //Get the current system date
+        LocalDate open = parseDate(openDate); //Convert string to LocalDate
+        LocalDate close = parseDate(closeDate); //Convert string to LocalDate
+
+        //It returns true if today is between open and close dates.
+        return (today.isEqual(open) || today.isAfter(open)) && (today.isEqual(close) || today.isBefore(close));
+    }
+    //Checks if today's date is after the closing date.
+    public boolean isAfterClosingDate() {
+        return LocalDate.now().isAfter(parseDate(closeDate)); //Will return True if it is
+    }
+    
+    private LocalDate parseDate(String dateStr) {
+        try {
+            //Both yyyy-mm-dd and dd/mm/yyyy also can, but our project we use yyyy-mm-dd
+            if (dateStr.contains("/")) {
+                return LocalDate.parse(dateStr, DateTimeFormatter.ofPattern("d/M/yyyy"));
+            }
+            //default: yyyy-mm-dd
+            return LocalDate.parse(dateStr, formatter);
+        } 
+        catch (Exception e) {
+            System.out.println("Invalid date format: " + dateStr); 
+            return LocalDate.MIN;
+        }
     }
     
 

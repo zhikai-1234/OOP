@@ -1,8 +1,9 @@
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-public class ManagerPortal {
+public class ManagerPortal implements PortalInterface{
     private Manager manager;
     private ProjectManager projectManager;
     private ApplicationHandler applicationHandler;
@@ -21,7 +22,7 @@ public class ManagerPortal {
         this.sc = sc;
     }
 
-    public void showManagerOptions() {
+    public void showOptions() {
         System.out.println("Welcome, Manager: " + manager.getName());
         System.out.println("[1] Create Projects");
         System.out.println("[2] Edit Projects");
@@ -32,7 +33,7 @@ public class ManagerPortal {
         System.out.println("[7] Approve/Reject applications");
         System.out.println("[8] Approve/reject withdrawal requests");
         System.out.println("[9] Generate a report of all active bookings");
-        System.out.println("[10] Reply to enquiries that pertain to your project");
+        System.out.println("[10] Reply/View enquiries");
         System.out.println("[11] Change password");
         System.out.println("[12] Change Filter Settings");
         System.out.println("[13] Logout");
@@ -43,9 +44,14 @@ public class ManagerPortal {
     	
         boolean exit = false;
         do {
-        	showManagerOptions();
-            int choice = scanner.nextInt();
-            scanner.nextLine();
+        	showOptions();
+            int choice;
+            try {
+                choice = Integer.parseInt(scanner.nextLine().trim());
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input. Please enter a number from 1 to 13.");
+                continue; 
+            }
 
             switch (choice) {
                 case 1 -> createProj();
@@ -54,10 +60,26 @@ public class ManagerPortal {
                 case 4 -> viewAllProj();
                 case 5 -> filteredProj();
                 case 6 -> manageOfficerApplications();
-                case 7 -> applicationHandler.approveApplication(sc);
+                case 7 -> applicationHandler.approveApplication(sc, manager);
                 case 8 -> applicationHandler.approveWithdrawals(sc);
                 case 9 -> projectManager.generateReport();
-                case 10 -> enquiryHandler.replyToEnquiriesManager(manager, manager.getProjectInCharge(), sc);
+                case 10 -> {
+                    System.out.println("1. View enquiries of ALL projects");
+                    System.out.println("2. View and reply to enquiries regarding YOUR projects");
+                    System.out.print("Enter your choice: ");
+                    int subChoice = sc.nextInt();
+                    sc.nextLine();
+
+                    if (subChoice == 1) {
+                        enquiryHandler.showAllEnquiries();
+                    } 
+                    else if (subChoice == 2) {
+                        enquiryHandler.replyToEnquiriesManager(manager, filteredProj(), sc);
+                    } 
+                    else {
+                        System.out.println("Invalid choice.");
+                    }
+                }  
                 case 11 -> changePassword();
                 case 12 -> managerFilter.promptForFilters(manager.getName(), manager, projectManager.getTemplateProjects());
                 case 13 -> {
@@ -101,6 +123,11 @@ public class ManagerPortal {
 
         System.out.print("Enter Application Closing Date (yyyy-mm-dd): ");
         String closeDate = scanner.nextLine();
+        
+        if (checkDateConflict(openDate, closeDate, null)) {
+            System.out.println("You are already managing a project during this application period.");
+            return;
+        }
 
         System.out.print("Enter number of Officer slots: ");
         int numOfficers = scanner.nextInt();
@@ -200,11 +227,29 @@ public class ManagerPortal {
                 }
                 case 9 -> {
                     System.out.print("Enter new Open Date (yyyy-mm-dd): ");
-                    project.setOpenDate(scanner.nextLine());
+                    String newOpen = scanner.nextLine();
+                    String currentClose = project.getCloseDate();
+
+                    if (checkDateConflict(newOpen, currentClose, project)) {
+                        System.out.println("Date conflict with another project. Change rejected.");
+                    } 
+                    else {
+                        project.setOpenDate(newOpen);
+                        System.out.println("Open date updated successfully.");
+                    }
                 }
                 case 10 -> {
                     System.out.print("Enter new Close Date (yyyy-mm-dd): ");
-                    project.setCloseDate(scanner.nextLine());
+                    String newClose = scanner.nextLine();
+                    String currentOpen = project.getOpenDate();
+
+                    if (checkDateConflict(currentOpen, newClose, project)) {
+                        System.out.println("Date conflict with another project. Change rejected.");
+                    } 
+                    else {
+                        project.setCloseDate(newClose);
+                        System.out.println("Close date updated successfully.");
+                    }
                 }
                 case 11 -> {
                     System.out.print("Enter new number of Officer Slots: ");
@@ -441,4 +486,40 @@ public class ManagerPortal {
             }
         }
     }
+    private boolean checkDateConflict(String newOpenStr, String newCloseStr, TemplateProject currentProject) {
+        try {
+            LocalDate newOpen = LocalDate.parse(newOpenStr.trim());
+            LocalDate newClose = LocalDate.parse(newCloseStr.trim());
+
+            for (TemplateProject p : projectManager.getTemplateProjects()) {
+                 //Only check against other projects managed by the same manager
+                if (!p.getManagerName().equals(manager.getName())) {
+                	continue;
+                }
+
+                //If editing an existing project, skip checking against itself
+                //check only other projects that is not currently editing
+                if (currentProject != null && p.equals(currentProject)) continue;
+
+                LocalDate existingOpen = LocalDate.parse(p.getOpenDate().trim());
+                LocalDate existingClose = LocalDate.parse(p.getCloseDate().trim());
+
+                //Overlap occurs if the new project period intersects with an existing one
+                boolean overlaps = !(newClose.isBefore(existingOpen) || newOpen.isAfter(existingClose));
+
+                if (overlaps) {
+                    return true; //Conflict found
+                }
+            }
+        } 
+        catch (Exception e) {
+            System.out.println("Invalid date format detected during conflict check.");
+            return true;//if got invalid dates like 35 of may
+        }
+
+        return false; //No conflicts
+    }
 }
+
+
+

@@ -1,6 +1,6 @@
 import java.util.*;
 
-public class OfficerPortal extends ApplicantPortal {
+public class OfficerPortal extends ApplicantPortal implements PortalInterface{
 
     private Applicant applicant;
 	private Officer officer;
@@ -42,7 +42,6 @@ public class OfficerPortal extends ApplicantPortal {
         System.out.println("[9] Exit Officer Menu");
     }
 
-    @Override
     public void portal() {
         boolean exit = false;
         do {
@@ -56,11 +55,11 @@ public class OfficerPortal extends ApplicantPortal {
                 System.out.print("Enter your choice: ");
                 if (sc.hasNextInt()) {
                     roleChoice = sc.nextInt();
-                    sc.nextLine(); // consume the newline
+                    sc.nextLine(); 
                     break;
                 } else {
                     System.out.println("Invalid input. Please enter a number.");
-                    sc.nextLine(); // consume the invalid input
+                    sc.nextLine(); 
                 }
             }
 
@@ -79,8 +78,14 @@ public class OfficerPortal extends ApplicantPortal {
         do {
             showOfficerOptions();
             System.out.print("Enter your choice: ");
-            int choice = sc.nextInt();
-            sc.nextLine();
+            int choice;
+            try {
+                choice = Integer.parseInt(sc.nextLine().trim());
+            } 
+            catch (NumberFormatException e) {
+                System.out.println("Invalid input. Enter Number Only.");
+                continue;
+            }
             switch(choice) {
 
             case 1 -> {
@@ -158,10 +163,17 @@ public class OfficerPortal extends ApplicantPortal {
                         }
                     }
                 }
-
+                
                 case 4 -> {
-                    System.out.println(officer.getAssignedProjectAsOfficer().getEnquiries());
-                    eh.replyToEnquiriesOfficer(officer, officer.getAssignedProjectAsOfficer(), sc);
+                	//Ensure that only the assigned officer can reply
+                    TemplateProject assigned = officer.getAssignedProjectAsOfficer();
+                    if (assigned == null) {
+                        System.out.println("You are not currently assigned to any project.");
+                        break;
+                    }
+
+                    System.out.println(assigned.getEnquiries());
+                    eh.replyToEnquiriesOfficer(officer, assigned, sc);
                 }
 
                 case 5 -> {
@@ -235,9 +247,20 @@ public class OfficerPortal extends ApplicantPortal {
 
 	public void updateApprovedBooking(Applicant a) {
         BookingRequest request = ah.getBookingsPendingApproval().get(a);
-        if(request == null) return;
+
+        if(request == null) {
+        	System.out.println("No pending booking request for this applicant.");
+            return;
+        }
 
         TemplateProject p = request.getTemplateProject();
+        
+        //Check to make sure only the officer assigned to the project can book for applicant
+        if (officer.getAssignedProjectAsOfficer() == null || !officer.getAssignedProjectAsOfficer().getName().equals(p.getName())) {
+            System.out.println("You are not assigned to this applicant's project.");
+            return;
+        }
+        
         int flatType = request.getFlatType();
 
         // Convert TemplateProject to LiveProject
@@ -284,9 +307,22 @@ public class OfficerPortal extends ApplicantPortal {
         pm.addLiveProject(a, liveProject);
         
         ah.removeBookingsPendingApproval(a);
+        System.out.println("Booking successfully recorded.");
     }
 
     public void generateReceipt(Applicant a) {
+    	//Ensuring only after applicant request the booking then Officer handle the booking
+    	if (!a.hasBookedFlat()) {
+    	    System.out.println("Error: Applicant has not booked a flat yet or you are not assigned to this applicant's project.");
+    	    return;
+    	}
+    	//Ensuring only the Officer in charge of the project can help handle the applicant booking
+    	TemplateProject p = a.getProjApplied();
+    	if (officer.getAssignedProjectAsOfficer() == null || 
+    	    !officer.getAssignedProjectAsOfficer().getName().equals(p.getName())) {
+    	    System.out.println("You are not assigned to this applicant's project.");
+    	    return;
+    	}
         System.out.println("=======================================");
         System.out.println("\nRECEIPT FOR SUCCESSFUL BOOKING\n");
         System.out.println("Applicant's name: " + a.getName());

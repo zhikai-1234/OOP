@@ -155,6 +155,13 @@ public class ProjectManager {
     public void generateReport() {
         for (Map.Entry<String, LiveProject> liveProj : liveProjects.entrySet()) {
             Applicant currentApplicant = liveProj.getValue().getApplicant();
+
+            //To only show if applicant has actually booked a flat if after booking 
+            //applicant withdraw that this wont print
+            if (!currentApplicant.hasBookedFlat()) {
+            	System.out.println("\nNo BookedFlat\n");
+                continue; 
+            }
             System.out.printf("\n Applicant Name: %s\n", currentApplicant.getName());
             System.out.printf("Flat Type: %d-Room | Project Name: %s | Age: %d | Marital Status: %s\n", 
             currentApplicant.getAppliedFlatType(), currentApplicant.getProjApplied().getName(), currentApplicant.getAge(), 
@@ -167,6 +174,17 @@ public class ProjectManager {
         t.getType2(), t.getNumOfType2(), t.getType2Price(), t.getOpenDate(), t.getCloseDate(), t.getManagerName(), t.getNumOfficers(), 
         t.getVisibility(), a);
         return l;
+    }
+    
+    //Used for finding the exact project of the Applicant that have withdrawn after
+    //booking of flats.
+    public TemplateProject retrieveTemplateProject(String name) {
+        for (TemplateProject p : templateProjects) {
+            if (p.getName().equalsIgnoreCase(name)) {
+                return p;
+            }
+        }
+        return null;
     }
     
     //Save to File

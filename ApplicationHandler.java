@@ -53,7 +53,8 @@ public class ApplicationHandler {
             }
 
             case 2 -> {
-                if (a.getProjApplied() == null) {
+            	//Make sure if applicant status is unsuccessful, they can go ahead and apply again
+            	if (a.getApplicationStatus().equals("No Project Applied") || a.getApplicationStatus().equals("Unsuccessful")) {
                     System.out.println("Would you like to apply for a 2-Room or 3-Room?");
                     System.out.println("[1] 2-Room");
                     System.out.println("[2] 3-Room");
@@ -181,22 +182,66 @@ public class ApplicationHandler {
     }
     
     // FOR MANAGER //
-    public void approveApplication(Scanner sc) { 
-        for (Map.Entry<Applicant, TemplateProject> application : projectsPendingApproval.entrySet()) {
-            System.out.printf("\nApplicant: %s || Applied Project: %s\n", application.getKey().getName(), 
-            application.getValue().getName());
-            if (application.getKey().getAppliedFlatType() == 1) {
-                System.out.printf("Flat Type: %s-Room || Number of flats left: %d\n", 2,
-                application.getValue().getNumOfType1());
-            }
-            else if (application.getKey().getAppliedFlatType() == 2) {
-                System.out.printf("Flat Type: %s-Room || Number of flats left: %d\n", 3,
-                application.getValue().getNumOfType2());
+    public void approveApplication(Scanner sc, Manager manager) { 
+    	boolean hasApplications = false;
+    	
+    	//Check if there is any application for this manager's projects so that other Manager not handling
+    	//can't accept or reject.
+        for (Map.Entry<Applicant, TemplateProject> entry : projectsPendingApproval.entrySet()) {
+            if (entry.getValue().getManagerName().equals(manager.getName())) {
+                hasApplications = true;
+                break;
             }
         }
+        //If don't have then return
+        if (!hasApplications) {
+            System.out.println("\nNo applications to approve or reject.\n");
+            return;
+        }
+    	
+        for (Map.Entry<Applicant, TemplateProject> application : projectsPendingApproval.entrySet()) {
+        	//To ensure only the manager in charge of project can approve applicant request
+            if (!application.getValue().getManagerName().equals(manager.getName())) {
+                continue; 
+            }
+            
+            Applicant applicant = application.getKey();
+            TemplateProject project = application.getValue();
+            //To remove the applicant request from showing up again whenever the manager
+            //approves or rejects them.
+            String status = applicant.getApplicationStatus();
+            if (status.equalsIgnoreCase("Approved") || status.equalsIgnoreCase("Booked") || status.equalsIgnoreCase("Unsuccessful")) {
+                continue;
+            }
+            
+            System.out.printf("\nApplicant: %s || Applied Project: %s\n", applicant.getName(), project.getName());
+            
+                int type = applicant.getAppliedFlatType();
+                int flatsLeft;
+                int displayRoom;
 
-        System.out.print("Enter the applicant's name to approve/reject their application: ");
-        String applicantName = sc.nextLine();
+                if (type == 1) {
+                    flatsLeft = project.getNumOfType1();
+                    displayRoom = 2;
+                } 
+                else {
+                    flatsLeft = project.getNumOfType2();
+                    displayRoom = 3;
+                }
+                System.out.printf("Flat Type: %d-Room || Flats Left: %d\n", displayRoom, flatsLeft);
+        }
+
+        System.out.print("Enter the applicant's name to approve/reject their application(or 0 to cancel): ");
+        String applicantName = sc.nextLine().trim(); 
+        if(applicantName.equals("0")) {
+        	System.out.println("Cancelled");
+        	return;
+        }
+        Applicant selectedApplicant = getApplicantFromName(applicantName);
+        if (selectedApplicant == null) {
+            System.out.println("Error: Applicant with name '" + applicantName + "' was not found.");
+            return;
+        }
         System.out.println("[A] Approve || [R] Reject");
         System.out.print("Enter your choice: ");
         String approval = sc.nextLine().toLowerCase();
@@ -233,21 +278,54 @@ public class ApplicationHandler {
             System.out.println("Applicant not found.");
             return;
         }
-
+        
+      
         if (approval.equals("a")) {
-            if (applicant.getApplicationStatus().equals("Successful")) {
-                withdrawalsPendingApproval.remove(applicant);
-                approvedProjects.remove(applicant);
-                applicant.setApplicationStatus("Approved");
-                System.out.println("Withdrawal successfully approved.");
-            } 
-            else if (applicant.getApplicationStatus().equals("Booked")) {
-                System.out.println("Withdrawal auto-rejected as project has already been booked.");
+
+        	// If the applicant had already booked a flat and now wishes to withdraw,
+        	// we need to properly reverse the booking effect by restoring the flat unit count,
+        	// and resetting the applicant’s booking and application status.
+        	// 
+        	// Because the applicant’s getProjApplied() is now a LiveProject object when
+        	// the officer helped booked the Project in the Officer class.
+        	// We dont update the LiveProject because it is only used at runtime for 
+        	// displaying and processing bookings. So, we locate and update
+        	// the corresponding TemplateProject stored in the main project list,
+        	// as this version is the one saved to file.
+        	//
+        	// The method retrieveTemplateProject(...) in the ProjectManager Class
+        	// will return the original TemplateProject 
+        	// based on the project name, allowing us to restore the original flat unit
+        	// availability when first read from file.
+            if (applicant.getApplicationStatus().equalsIgnoreCase("Booked")) {
+            	TemplateProject project = pm.retrieveTemplateProject(applicant.getProjApplied().getName());
+                // Restore flat count
+                if (applicant.getBookedFlatType() == 1) {
+                    project.setNumOfType1(project.getNumOfType1() + 1);
+                } else if (applicant.getBookedFlatType() == 2) {
+                    project.setNumOfType2(project.getNumOfType2() + 1);
+                }
+
+                //Reset applicant's booked status
+                applicant.setBookedFlat(false);
+                applicant.setBookedFlatType(-1);
             }
+            
+            //If the Manager approves the rejection then just update applicant status to
+            //Unsuccessful so that applicant still can view the applied proj and also
+            //can apply for another hdb project.
+            approvedProjects.remove(applicant);
+            bookingsPendingApproval.remove(applicant);
+
+            //Reset application status
+            applicant.setApplicationStatus("Unsuccessful");
+
+            withdrawalsPendingApproval.remove(applicant);
+            System.out.println("Withdrawal successfully approved.");
         } 
         else if (approval.equals("r")) {
             withdrawalsPendingApproval.remove(applicant);
-            System.out.println("Withdrawal successfully rejected.");
+            System.out.println("Withdrawal successfully rejected."); 
         }
     }
 
